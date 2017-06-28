@@ -22,7 +22,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var character: SKSpriteNode!
     var specimenCount: Int = 0
     var gameState: GameState = .playing
-    var force: CGFloat = 500
+    var force: CGFloat = 700
     var scrollLayer: SKNode!
     var scrollSpeed: CGFloat = 100
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
@@ -31,7 +31,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bonusLayer: SKNode!
     var obstacleTimer: CFTimeInterval = 0
     var bonusTimer: CFTimeInterval = 0
+    var logTimer: CFTimeInterval = 0
     var sourceBonus: SKNode!
+    var logLayer: SKNode!
+    var sourceLog: SKNode!
     
     
     override func didMove(to view: SKView) {
@@ -45,10 +48,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sourceObstacle = self.childNode(withName: "obstacle")
         bonusLayer = self.childNode(withName: "bonusLayer")
         sourceBonus = self.childNode(withName: "bonus")
+        logLayer = self.childNode(withName: "logLayer")
+        sourceLog = self.childNode(withName:"log")
 
         /* Set up accelerometer */
         motionManager.startAccelerometerUpdates()
-        motionManager.accelerometerUpdateInterval = 0.01
+        motionManager.accelerometerUpdateInterval = 0.1
         character.physicsBody!.linearDamping = 0
         
         
@@ -74,7 +79,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         guard let data = motionManager.accelerometerData else { return }
-    
         
         /* Alters force applied with tilt */
         character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
@@ -83,9 +87,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if scrollSpeed > 0 {
             scrollObstacles()
             scrollBonus()
+            scrollLogs()
         }
+        
+        /* timers count */
         obstacleTimer += fixedDelta
         bonusTimer += fixedDelta
+        logTimer += fixedDelta
 
         
     }
@@ -138,6 +146,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scrollSpeed = 0
             return
         }
+        
+        if nodeA.name == "log" || nodeB.name == "log" {
+            gameState = .gameOver
+            print("Game over")
+            force = 0
+            character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            scrollSpeed = 0
+            return
+        }
 
         
         
@@ -176,7 +193,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 3.5 {
+        if obstacleTimer > 5 {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -192,8 +209,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     
     }
+    
+    
+    func scrollLogs() {
+        
+        
+        logLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
+        /* Logs move across screen */
+        
+        
+        logLayer.position.x += CGFloat.random(min: 0.5, max: 3)
+        
+        
+        
+        
+        
+//        if logLayer.position.x == 750 + 95 {
+//            
+//            logLayer.position.x = 0
+//            
+//        }
+        for object in logLayer.children as! [SKReferenceNode] {
+            
+            let objectPosition = logLayer.convert(object.position, to: self)
+            if objectPosition.y <= -10 {
+                object.removeFromParent()
+            }
+            
+            if objectPosition.x >= 750 + 95 {
+                let newPosition = CGPoint(x: -95, y: objectPosition.y)
+                
+                object.position = self.convert(newPosition, to: logLayer)
+            }
+
+            
+        }
+        
+        if logTimer > 5 {
+            
+            /* has to be SKNode bc it's a reference node */
+            
+            let newLog = sourceLog.copy() as! SKNode
+            logLayer.addChild(newLog)
+            
+            let logPosition = CGPoint(x: 50, y: 1574)
+            newLog.position = self.convert(logPosition, to: logLayer)
+        
+            
+            logTimer = 0
+            
+        }
+        
+       
+        
+    }
    
     
+    /* create bonus objects and scroll them at SAME SPEED as obstacles */
     func scrollBonus() {
         bonusLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         for object in bonusLayer.children as! [SKReferenceNode] {
@@ -205,18 +277,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         }
+    
+        /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer > 3.5 {
+        if bonusTimer > 5 {
+            
+            /* Random Number Generator */
+            let rand = arc4random_uniform(100)
+            
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1474)
+            
+            
+            if rand < 70 {
+                /* 35% chance of a left side */
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1504)
+                
+                if rand < 35 {
+                    /* 35% chance of a right side */
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1474)
+                }
+            }
+            
+            else {
+                /* 30% chance of middle  */
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1474)
+            }
+           
+            /* Add new coins */
             let newBonus = sourceBonus.copy() as! SKNode
             bonusLayer.addChild(newBonus)
             
-            let randomPosition = CGPoint(x: CGFloat.random(min:0, max:750), y: 1474)
+//            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
             
             bonusTimer = 0
         }
 
     }
+    
+    
+    
   
     
 }
