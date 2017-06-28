@@ -73,7 +73,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
         
         scrollWorld()
-        scrollObstacles()
+        if scrollSpeed > 0 {
+            scrollObstacles()
+        }
         obstacleTimer += fixedDelta
 
         
@@ -164,11 +166,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 2.3 {
+        if obstacleTimer > 2.5 {
             
             
             let newObstacle = sourceObstacle.copy() as! SKNode
-            newObstacle.name = "obstacle"
             obstacleLayer.addChild(newObstacle)
             
             let randomPosition = CGPoint(x: CGFloat.random(min:0, max:750), y: 1334)
