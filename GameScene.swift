@@ -22,27 +22,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var character: SKSpriteNode!
     var specimenCount: Int = 0
     var gameState: GameState = .playing
-    var force: CGFloat = 300
+    var force: CGFloat = 500
     var scrollLayer: SKNode!
     var scrollSpeed: CGFloat = 100
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
     var sourceObstacle: SKNode!
     var obstacleLayer: SKNode!
+    var bonusLayer: SKNode!
     var obstacleTimer: CFTimeInterval = 0
+    var bonusTimer: CFTimeInterval = 0
+    var sourceBonus: SKNode!
     
     
     override func didMove(to view: SKView) {
         
         
         physicsWorld.contactDelegate = self
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         character = childNode(withName: "character") as! SKSpriteNode
         scrollLayer = self.childNode(withName: "scrollLayer")
         obstacleLayer = self.childNode(withName: "obstacleLayer")
         sourceObstacle = self.childNode(withName: "obstacle")
+        bonusLayer = self.childNode(withName: "bonusLayer")
+        sourceBonus = self.childNode(withName: "bonus")
 
         /* Set up accelerometer */
         motionManager.startAccelerometerUpdates()
         motionManager.accelerometerUpdateInterval = 0.01
+        character.physicsBody!.linearDamping = 0
         
         
         
@@ -62,7 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let targetX = character.position.x
         
         /* Set boundaries */
-        let x = clamp(value: targetX, lower: 40, upper: 630)
+        let x = clamp(value: targetX, lower: 50, upper: 710)
         character.position.x = x
         
         
@@ -75,8 +82,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scrollWorld()
         if scrollSpeed > 0 {
             scrollObstacles()
+            scrollBonus()
         }
         obstacleTimer += fixedDelta
+        bonusTimer += fixedDelta
 
         
     }
@@ -125,6 +134,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             gameState = .gameOver
             print("Game over")
             force = 0
+            character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             scrollSpeed = 0
             return
         }
@@ -166,19 +176,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 2.5 {
+        if obstacleTimer > 3.5 {
             
+            /* has to be SKNode bc it's a reference node */
             
             let newObstacle = sourceObstacle.copy() as! SKNode
             obstacleLayer.addChild(newObstacle)
             
-            let randomPosition = CGPoint(x: CGFloat.random(min:0, max:750), y: 1334)
+            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1334)
             newObstacle.position = self.convert(randomPosition, to: obstacleLayer)
             
+            
             obstacleTimer = 0
+            
         }
     
     }
+   
+    
+    func scrollBonus() {
+        bonusLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
+        for object in bonusLayer.children as! [SKReferenceNode] {
+            
+            /* gets rid of coins once hit */
+            let objectPosition = obstacleLayer.convert(object.position, to: self)
+            if objectPosition.y <= -12.5 {
+                object.removeFromParent()
+            }
+            
+        }
+        
+        if bonusTimer > 3.5 {
+            let newBonus = sourceBonus.copy() as! SKNode
+            bonusLayer.addChild(newBonus)
+            
+            let randomPosition = CGPoint(x: CGFloat.random(min:0, max:750), y: 1474)
+            newBonus.position = self.convert(randomPosition, to: bonusLayer)
+            
+            bonusTimer = 0
+        }
+
+    }
+  
     
 }
 
