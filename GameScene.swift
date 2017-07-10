@@ -16,15 +16,18 @@ enum GameState {
     case playing, gameOver
 }
 
+var width: CGFloat = 0
+var height: CGFloat = 0
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let motionManager = CMMotionManager()
-    var character: SKSpriteNode!
+    var character: Character!
     var specimenCount: Int = 0
     var gameState: GameState = .playing
-    var force: CGFloat = 700
+    var force: CGFloat = 1400
     var scrollLayer: SKNode!
-    var scrollSpeed: CGFloat = 100
+    var scrollSpeed: CGFloat = 130
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
     var sourceObstacle: SKNode!
     var obstacleLayer: SKNode!
@@ -35,6 +38,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var sourceBonus: SKNode!
     var logLayer: SKNode!
     var sourceLog: SKNode!
+    var specimenCounter: SKLabelNode!
+    var logSpeed: CGFloat = 0
     
     
     override func didMove(to view: SKView) {
@@ -42,7 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-        character = childNode(withName: "character") as! SKSpriteNode
+        character = childNode(withName: "character") as! Character
         scrollLayer = self.childNode(withName: "scrollLayer")
         obstacleLayer = self.childNode(withName: "obstacleLayer")
         sourceObstacle = self.childNode(withName: "obstacle")
@@ -50,20 +55,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sourceBonus = self.childNode(withName: "bonus")
         logLayer = self.childNode(withName: "logLayer")
         sourceLog = self.childNode(withName:"log")
+        specimenCounter = childNode(withName: "specimenCounter") as! SKLabelNode
 
-        /* Set up accelerometer */
-        motionManager.startAccelerometerUpdates()
-        motionManager.accelerometerUpdateInterval = 0.1
-        character.physicsBody!.linearDamping = 0
+//        /* Set up accelerometer */
+//        motionManager.startAccelerometerUpdates()
+//        motionManager.accelerometerUpdateInterval = 0.1
+//        character.physicsBody!.linearDamping = 0
         
+        character.isUserInteractionEnabled = true
         
-        
+        height = self.size.height
+        width = self.size.width
     
     }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        let touch = touches.first!
+        
+        /* Get touch position in scene */
+        let location = touch.location(in:self)
+        
+        switch gameState {
+        case .gameOver:
+            return
+        case .playing:
+            if location.x > width/2 {
+//                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                character.physicsBody?.applyImpulse(CGVector(dx:200, dy:0))
+                
+                
+            } else if location.x < width/2 {
+//                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                character.physicsBody?.applyImpulse(CGVector(dx:-200, dy:0))
+                
+            }
+
+        
+        }
+
         
     }
         
@@ -71,17 +102,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
-        let targetX = character.position.x
+//        let targetX = character.position.x
         
-        /* Set boundaries */
-        let x = clamp(value: targetX, lower: 50, upper: 710)
-        character.position.x = x
+//        /* Set boundaries */
+//        let x = clamp(value: targetX, lower: 50, upper: 710)
+//        character.position.x = x
         
         
-        guard let data = motionManager.accelerometerData else { return }
-        
-        /* Alters force applied with tilt */
-        character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
+//        guard let data = motionManager.accelerometerData else { return }
+//        
+//        /* Alters force applied with tilt */
+//        character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
         
         scrollWorld()
         if scrollSpeed > 0 {
@@ -94,7 +125,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         obstacleTimer += fixedDelta
         bonusTimer += fixedDelta
         logTimer += fixedDelta
-
+        
+        specimenCounter.text = "\(specimenCount)"
         
     }
     
@@ -137,22 +169,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         
+        /* if the hero hits an obstacle, stop all actions in task */
         
         if nodeA.name == "obstacle" || nodeB.name == "obstacle" {
+            /* change gamestate */
             gameState = .gameOver
             print("Game over")
+            /* Stop the hero from moving and stop the scene from scrolling */
             force = 0
-            character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             scrollSpeed = 0
+            character.physicsBody?.velocity = CGVector(dx:0, dy:0)
             return
         }
         
         if nodeA.name == "log" || nodeB.name == "log" {
+            /* If the hero hits a moving log, stop the game */
             gameState = .gameOver
             print("Game over")
             force = 0
-            character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             scrollSpeed = 0
+            character.physicsBody?.velocity = CGVector(dx:0, dy:0)
             return
         }
 
@@ -218,17 +254,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Logs move across screen */
         
         
-        logLayer.position.x += CGFloat.random(min: 0.5, max: 3)
         
         
         
-        
-        
-//        if logLayer.position.x == 750 + 95 {
-//            
-//            logLayer.position.x = 0
-//            
-//        }
+
+   
         for object in logLayer.children as! [SKReferenceNode] {
             
             let objectPosition = logLayer.convert(object.position, to: self)
@@ -236,26 +266,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 object.removeFromParent()
             }
             
+            /* Regenerate log if it moves off the screen */
+            
             if objectPosition.x >= 750 + 95 {
+                /* log starts off screen on the left b/c 95 is half its width */
                 let newPosition = CGPoint(x: -95, y: objectPosition.y)
                 
                 object.position = self.convert(newPosition, to: logLayer)
             }
+            object.position.x += CGFloat(logSpeed)
 
+            
             
         }
         
         if logTimer > 5 {
+            
+            logSpeed += 0.2
             
             /* has to be SKNode bc it's a reference node */
             
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: 50, y: 1574)
+            let logPosition = CGPoint(x: 50, y: 1604)
             newLog.position = self.convert(logPosition, to: logLayer)
-        
             
+            /* Log speed must be here in order for each log generated to have a diff. speed */
+            
+            logSpeed = CGFloat.random(min: 2.5, max: 3.5)
+
             logTimer = 0
             
         }
@@ -285,22 +325,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Random Number Generator */
             let rand = arc4random_uniform(100)
             
-            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1474)
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1800)
             
             
             if rand < 70 {
                 /* 35% chance of a left side */
-                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1504)
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1800)
                 
                 if rand < 35 {
                     /* 35% chance of a right side */
-                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1474)
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1800)
                 }
             }
             
             else {
                 /* 30% chance of middle  */
-                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1474)
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1500)
             }
            
             /* Add new coins */
