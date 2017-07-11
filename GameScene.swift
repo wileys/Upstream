@@ -5,7 +5,6 @@
 //  Created by Wiley Siler on 6/26/17.
 //  Copyright © 2017 Wiley Siler. All rights reserved.
 //
-
 import SpriteKit
 import GameplayKit
 import Foundation
@@ -15,6 +14,37 @@ import CoreMotion
 enum GameState {
     case playing, gameOver
 }
+
+var bioDiversity: Double {
+    get {
+        return UserDefaults.standard.double(forKey: "bioDiversity")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "bioDiversity")
+    }
+}
+
+
+var dayCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "dayCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "dayCount")
+    }
+}
+
+
+var totalSpecimens: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "totalSpecimens")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "totalSpecimens")
+    }
+}
+
+
 
 var width: CGFloat = 0
 var height: CGFloat = 0
@@ -39,11 +69,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var logLayer: SKNode!
     var sourceLog: SKNode!
     var specimenCounter: SKLabelNode!
-    var logSpeed: CGFloat = 0
+    var logSpeed: CGFloat = 4
+    var gameOverMenu: SKSpriteNode!
+    var totalSpecimensLabel: SKLabelNode!
+    var earthButton: MSButtonNode!
+    
     
     
     override func didMove(to view: SKView) {
         
+        dayCount += 1
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -56,17 +91,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         logLayer = self.childNode(withName: "logLayer")
         sourceLog = self.childNode(withName:"log")
         specimenCounter = childNode(withName: "specimenCounter") as! SKLabelNode
-
-//        /* Set up accelerometer */
-//        motionManager.startAccelerometerUpdates()
-//        motionManager.accelerometerUpdateInterval = 0.1
-//        character.physicsBody!.linearDamping = 0
+        gameOverMenu = childNode(withName: "gameOverMenu") as! SKSpriteNode
+        totalSpecimensLabel = gameOverMenu.childNode(withName: "totalSpecimensLabel") as! SKLabelNode
+        earthButton = gameOverMenu.childNode(withName: "earthButton") as! MSButtonNode
+        
+        //        /* Set up accelerometer */
+        //        motionManager.startAccelerometerUpdates()
+        //        motionManager.accelerometerUpdateInterval = 0.1
+        //        character.physicsBody!.linearDamping = 0
         
         character.isUserInteractionEnabled = true
         
         height = self.size.height
         width = self.size.width
-    
+        
+        earthButton.selectedHandler = {
+            if let view = self.view {
+                // Load the SKScene from 'GameScene.sks'
+                if let scene = SKScene(fileNamed: "Earth") {
+                    // Set the scale mode to scale to fit the window
+                    
+                    bioDiversity -= 0.10
+                    scene.scaleMode = .aspectFill
+                    
+                    // Present the scene
+                    view.presentScene(scene)
+                    
+                }
+                
+                view.ignoresSiblingOrder = true
+                
+                view.showsFPS = true
+                view.showsNodeCount = true
+ 
+        }
+    }
+        
+        if bioDiversity <= 0 {
+            resetUserDefaults()
+        }
     }
     
     
@@ -82,37 +145,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         case .playing:
             if location.x > width/2 {
-//                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                //                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
                 character.physicsBody?.applyImpulse(CGVector(dx:200, dy:0))
                 
                 
             } else if location.x < width/2 {
-//                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                //                character.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
                 character.physicsBody?.applyImpulse(CGVector(dx:-200, dy:0))
                 
             }
-
-        
+            
+            
         }
-
+        
         
     }
-        
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
-//        let targetX = character.position.x
+        //        let targetX = character.position.x
         
-//        /* Set boundaries */
-//        let x = clamp(value: targetX, lower: 50, upper: 710)
-//        character.position.x = x
+        //        /* Set boundaries */
+        //        let x = clamp(value: targetX, lower: 50, upper: 710)
+        //        character.position.x = x
         
         
-//        guard let data = motionManager.accelerometerData else { return }
-//        
-//        /* Alters force applied with tilt */
-//        character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
+        //        guard let data = motionManager.accelerometerData else { return }
+        //
+        //        /* Alters force applied with tilt */
+        //        character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
         
         scrollWorld()
         if scrollSpeed > 0 {
@@ -128,26 +191,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         specimenCounter.text = "\(specimenCount)"
         
+        
     }
     
     func didBegin (_ contact: SKPhysicsContact) {
-//        let contactA = contact.bodyA
-//        let contactB = contact.bodyB
-//        
-//        let nodeA = contactA.node!
-//        let nodeB = contactB.node!
-//        
-//        if nodeA.name == "bonus" || nodeB.name = "bonus" {
-//            specimenCount += 1
-//            print(specimenCount)
-//            return
-//        }
-        
         
         let contactA = contact.bodyA
         let contactB = contact.bodyB
         
-    
+        
         let nodeA = contactA.node!
         let nodeB = contactB.node!
         
@@ -155,6 +207,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Check node contact for either a bonus or obstacle */
         if nodeA.name == "bonus" || nodeB.name == "bonus" {
             specimenCount += 1
+            bioDiversity += 0.01
             print(specimenCount)
             
             if nodeA.name == "bonus" {
@@ -165,7 +218,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 nodeB.removeFromParent()
             }
             
-            
+           
+
         }
         
         
@@ -179,7 +233,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             force = 0
             scrollSpeed = 0
             character.physicsBody?.velocity = CGVector(dx:0, dy:0)
-            return
+            updateUserDefaults()
+            
         }
         
         if nodeA.name == "log" || nodeB.name == "log" {
@@ -189,11 +244,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             force = 0
             scrollSpeed = 0
             character.physicsBody?.velocity = CGVector(dx:0, dy:0)
-            return
+            updateUserDefaults()
+            
         }
-
         
         
+         checkEnd()
     }
     
     /* Scroll the background */
@@ -211,11 +267,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Convert new node position back to scroll layer space */
                 background.position = self.convert(newPosition, to: scrollLayer)
             }
-
+            
+            
+        }
         
     }
-
-}
     func scrollObstacles() {
         
         
@@ -243,7 +299,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             obstacleTimer = 0
             
         }
-    
+        
     }
     
     
@@ -252,13 +308,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         logLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         /* Logs move across screen */
-        
-        
-        
-        
-        
+    
 
-   
+        
+        
+        
         for object in logLayer.children as! [SKReferenceNode] {
             
             let objectPosition = logLayer.convert(object.position, to: self)
@@ -268,42 +322,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Regenerate log if it moves off the screen */
             
-            if objectPosition.x >= 750 + 95 {
-                /* log starts off screen on the left b/c 95 is half its width */
+            if object.position.x >= 845 {
+            
+
+//                 log starts off screen on the left b/c 95 is half its width 
+               
                 let newPosition = CGPoint(x: -95, y: objectPosition.y)
                 
                 object.position = self.convert(newPosition, to: logLayer)
-            }
-            object.position.x += CGFloat(logSpeed)
+                
+                
 
+            }
             
+            object.position.x += logSpeed
+
             
         }
         
         if logTimer > 5 {
             
-            logSpeed += 0.2
             
             /* has to be SKNode bc it's a reference node */
             
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: 50, y: 1604)
+            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 600), y: 1604)
             newLog.position = self.convert(logPosition, to: logLayer)
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
             
-            logSpeed = CGFloat.random(min: 2.5, max: 3.5)
-
+            logSpeed = CGFloat.random(min: 3, max: 3.5)
+            
             logTimer = 0
             
         }
         
-       
+        
         
     }
-   
+    
     
     /* create bonus objects and scroll them at SAME SPEED as obstacles */
     func scrollBonus() {
@@ -317,7 +376,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
         }
-    
+        
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
         if bonusTimer > 5 {
@@ -337,27 +396,58 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1800)
                 }
             }
-            
+                
             else {
                 /* 30% chance of middle  */
                 randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1500)
             }
-           
+            
             /* Add new coins */
             let newBonus = sourceBonus.copy() as! SKNode
             bonusLayer.addChild(newBonus)
             
-//            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
+            //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
             
             bonusTimer = 0
         }
+        
+    }
+    
+    func updateUserDefaults() {
+        
+        totalSpecimens += specimenCount
+        UserDefaults.standard.set(totalSpecimens, forKey: "totalSpecimens")
+        
+        UserDefaults.standard.set(bioDiversity, forKey: "bioDiversity")
+        
+        UserDefaults.standard.set(dayCount, forKey: "dayCount")
+        
+        let retrieve = UserDefaults.standard.integer(forKey: "dayCount")
+        print(retrieve)
 
     }
     
+    func resetUserDefaults() {
+        
+        UserDefaults.standard.set(0, forKey: "totalSpecimens")
+        
+        UserDefaults.standard.set(0, forKey: "dayCount")
+        
+        UserDefaults.standard.set(0.4, forKey: "bioDiversity")
+
+
+    }
     
+    func checkEnd() {
+        if gameState == .gameOver {
+            totalSpecimensLabel.text = "\(totalSpecimens)"
+            let scroll:SKAction = SKAction.init(named: "ScrollDown")!
+            gameOverMenu.run(scroll)
+            return
+        }
+    }
     
-  
     
 }
 

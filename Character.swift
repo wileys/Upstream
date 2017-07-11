@@ -16,7 +16,6 @@ class Character: SKSpriteNode {
     
     
     
-    
     override init(texture: SKTexture?, color:UIColor, size: CGSize) {
         super.init(texture:texture, color: color, size: size)
         isUserInteractionEnabled = true
