@@ -18,6 +18,7 @@ class Earth: SKScene {
     var playButton: MSButtonNode!
     var bioBar: SKSpriteNode!
     var dayCountLabel: SKLabelNode!
+    var populationLabel: SKLabelNode!
    
     
     
@@ -29,21 +30,30 @@ class Earth: SKScene {
         
         bioBar = childNode(withName: "bioBar") as! SKSpriteNode
         
-        if bioDiversity >= 0 {
+        
+        
+        if bioDiversity > 0 {
             bioBar.xScale = CGFloat(bioNumber)
         } else {
             bioBar.isHidden = true
         }
-        dayCountLabel = childNode(withName: "dayCountLabel") as! SKLabelNode
         
+        dayCountLabel = childNode(withName: "dayCountLabel") as! SKLabelNode
         dayCountLabel.text = String(dayCount)
         
-        playButton = childNode(withName: "playButton") as! MSButtonNode
+        populationLabel = childNode(withName: "populationLabel") as! SKLabelNode
+        populationLabel.text = String(totalSpecimens)
         
+        playButton = childNode(withName: "playButton") as! MSButtonNode
+        print(bioDiversity)
         playButton.selectedHandler = {
+
             self.loadGame()
+            
         }
         print(dayCount)
+        
+        
         
     }
     
@@ -65,4 +75,17 @@ class Earth: SKScene {
             view.showsNodeCount = true
         }
     }
+    
+    func resetUserDefaults() {
+        
+        UserDefaults.standard.set(0, forKey: "totalSpecimens")
+        
+        UserDefaults.standard.set(0, forKey: "dayCount")
+        
+        UserDefaults.standard.set(0.4, forKey: "bioDiversity")
+        
+        
+    }
+    
+    
 }

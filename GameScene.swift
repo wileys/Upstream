@@ -74,11 +74,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
+    /* Tutorial thumbs */
+    var tutorialLabel: SKLabelNode!
+   
     
     
     override func didMove(to view: SKView) {
         
+        if bioDiversity <= 0.01 {
+            resetUserDefaults()
+            print("SAD")
+        }
+        
         dayCount += 1
+         bioDiversity -= 0.10
+        gameState = .playing
+
         
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
@@ -94,6 +105,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverMenu = childNode(withName: "gameOverMenu") as! SKSpriteNode
         totalSpecimensLabel = gameOverMenu.childNode(withName: "totalSpecimensLabel") as! SKLabelNode
         earthButton = gameOverMenu.childNode(withName: "earthButton") as! MSButtonNode
+        
+        tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
+        
+        if dayCount == 1 {
+            tutorialLabel.isHidden = false
+        } else {
+            tutorialLabel.isHidden = true
+        }
         
         //        /* Set up accelerometer */
         //        motionManager.startAccelerometerUpdates()
@@ -111,7 +130,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if let scene = SKScene(fileNamed: "Earth") {
                     // Set the scale mode to scale to fit the window
                     
-                    bioDiversity -= 0.10
+                   
                     scene.scaleMode = .aspectFill
                     
                     // Present the scene
@@ -127,9 +146,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
         
-        if bioDiversity <= 0 {
-            resetUserDefaults()
-        }
+      
+       
     }
     
     
@@ -163,19 +181,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-        
-        //        let targetX = character.position.x
-        
-        //        /* Set boundaries */
-        //        let x = clamp(value: targetX, lower: 50, upper: 710)
-        //        character.position.x = x
-        
-        
-        //        guard let data = motionManager.accelerometerData else { return }
-        //
-        //        /* Alters force applied with tilt */
-        //        character.physicsBody?.applyForce(CGVector(dx: force * CGFloat(data.acceleration.x), dy: 0 * CGFloat(data.acceleration.x)))
         
         scrollWorld()
         if scrollSpeed > 0 {
@@ -217,11 +222,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if nodeB.name == "bonus" {
                 nodeB.removeFromParent()
             }
-            
-           
 
         }
-        
         
         /* if the hero hits an obstacle, stop all actions in task */
         
@@ -248,8 +250,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
+        checkEnd()
         
-         checkEnd()
     }
     
     /* Scroll the background */
@@ -285,7 +287,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 5 {
+        if obstacleTimer > 4 {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -295,10 +297,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1334)
             newObstacle.position = self.convert(randomPosition, to: obstacleLayer)
             
-            
             obstacleTimer = 0
             
+            let hide: SKAction = SKAction.init(named: "Hide")!
+            tutorialLabel.run(hide)
+            
+            
         }
+        
         
     }
     
@@ -340,7 +346,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 5 {
+        if logTimer > 4 {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -348,12 +354,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 600), y: 1604)
+            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1524)
             newLog.position = self.convert(logPosition, to: logLayer)
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
             
-            logSpeed = CGFloat.random(min: 3, max: 3.5)
+            logSpeed = CGFloat.random(min: 3.5, max: 4)
             
             logTimer = 0
             
@@ -379,27 +385,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer > 5 {
+        if bonusTimer > 4 {
             
             /* Random Number Generator */
             let rand = arc4random_uniform(100)
             
-            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1800)
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1650)
             
             
             if rand < 70 {
                 /* 35% chance of a left side */
-                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1800)
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1650)
                 
                 if rand < 35 {
                     /* 35% chance of a right side */
-                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1800)
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1650)
                 }
             }
                 
             else {
                 /* 30% chance of middle  */
-                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1500)
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1650)
             }
             
             /* Add new coins */
@@ -435,9 +441,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(0, forKey: "dayCount")
         
         UserDefaults.standard.set(0.4, forKey: "bioDiversity")
-
-
+        
+        
     }
+
     
     func checkEnd() {
         if gameState == .gameOver {
@@ -447,6 +454,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
     }
+    
     
     
 }
