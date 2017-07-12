@@ -15,37 +15,9 @@ enum GameState {
     case playing, gameOver
 }
 
-var bioDiversity: Double {
-    get {
-        return UserDefaults.standard.double(forKey: "bioDiversity")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "bioDiversity")
-    }
-}
-
-
-var dayCount: Int {
-    get {
-        return UserDefaults.standard.integer(forKey: "dayCount")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "dayCount")
-    }
-}
-
-
-var totalSpecimens: Int {
-    get {
-        return UserDefaults.standard.integer(forKey: "totalSpecimens")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "totalSpecimens")
-    }
-}
-
 var collectedList = [String]()
 
+let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal", "Chicken", "Spider", "Caterpillar", "Penguin", "Monkey", "Eagle", "Panda"]
 
 
 var width: CGFloat = 0
@@ -79,7 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var collectedLabel: SKLabelNode!
     
     
-    let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal"]
+   
     var specimenName = ""
     
     /* Tutorial thumbs */
@@ -465,18 +437,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         totalSpecimens += specimenCount
         UserDefaults.standard.set(totalSpecimens, forKey: "totalSpecimens")
-        
         UserDefaults.standard.set(bioDiversity, forKey: "bioDiversity")
-        
         UserDefaults.standard.set(dayCount, forKey: "dayCount")
         
         UserDefaults.standard.set(lionCount, forKey: "lionCount")
-        
         UserDefaults.standard.set(sealCount, forKey: "sealCount")
-        
         UserDefaults.standard.set(goldenCount, forKey: "goldenCount")
-        
         UserDefaults.standard.set(giraffeCount, forKey: "giraffeCount")
+        UserDefaults.standard.set(chickenCount, forKey: "chickenCount")
+        UserDefaults.standard.set(spiderCount, forKey: "spiderCount")
+        UserDefaults.standard.set(caterpillarCount, forKey: "caterpillarCount")
+        UserDefaults.standard.set(penguinCount, forKey: "penguinCount")
+        UserDefaults.standard.set(monkeyCount, forKey: "monkeyCount")
+        UserDefaults.standard.set(eagleCount, forKey: "eagleCount")
+        UserDefaults.standard.set(pandaCount, forKey: "pandaCount")
         
         
 //        let retrieve = UserDefaults.standard.integer(forKey: "dayCount")
@@ -487,18 +461,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func resetUserDefaults() {
         
         UserDefaults.standard.set(0, forKey: "totalSpecimens")
-        
         UserDefaults.standard.set(0, forKey: "dayCount")
-        
         UserDefaults.standard.set(0.4, forKey: "bioDiversity")
         
         UserDefaults.standard.set(0, forKey: "lionCount")
-        
         UserDefaults.standard.set(0, forKey: "sealCount")
-        
         UserDefaults.standard.set(0, forKey: "goldenCount")
-        
         UserDefaults.standard.set(0, forKey: "giraffeCount")
+        UserDefaults.standard.set(0, forKey: "chickenCount")
+        UserDefaults.standard.set(0, forKey: "spiderCount")
+        UserDefaults.standard.set(0, forKey: "caterpillarCount")
+        UserDefaults.standard.set(0, forKey: "penguinCount")
+        UserDefaults.standard.set(0, forKey: "monkeyCount")
+        UserDefaults.standard.set(0, forKey: "eagleCount")
+        UserDefaults.standard.set(0, forKey: "pandaCount")
         
 
         
@@ -526,6 +502,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             emoji = "🐶"
         case "Seal":
             emoji = "🐳"
+        case "Chicken":
+            emoji = "🐔"
+        case "Spider":
+            emoji = "🕷"
+        case "Caterpillar":
+            emoji = "🐛"
+        case "Penguin":
+            emoji = "🐧"
+        case "Monkey":
+            emoji = "🐒"
+        case "Eagle":
+            emoji = "🦅"
+        case "Panda":
+            emoji = "🐼"
         default:
             return
         }

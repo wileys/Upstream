@@ -10,43 +10,6 @@
 import Foundation
 import SpriteKit
 
-var lionCount: Int {
-    get {
-        return UserDefaults.standard.integer(forKey: "lionCount")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "lionCount")
-    }
-
-}
-var giraffeCount: Int {
-    get {
-        return UserDefaults.standard.integer(forKey: "giraffeCount")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "giraffeCount")
-    }
-
-}
-var goldenCount: Int  {
-    get {
-        return UserDefaults.standard.integer(forKey: "goldenCount")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "goldenCount")
-    }
-
-}
-var sealCount: Int {
-    get {
-        return UserDefaults.standard.integer(forKey: "sealCount")
-    }
-    set {
-        UserDefaults.standard.set(newValue, forKey: "sealCount")
-    }
-
-}
-
 
 class Earth: SKScene {
     /* UI Connections */
@@ -63,6 +26,9 @@ class Earth: SKScene {
     
     
     override func didMove(to view: SKView) {
+        
+        countSpecimens()
+
         
         let bioNumber = bioDiversity
 
@@ -103,7 +69,6 @@ class Earth: SKScene {
         
         
         /* Count the number of each specimen in the array */
-        countSpecimens()
         
         
         
@@ -169,6 +134,20 @@ class Earth: SKScene {
                     goldenCount += 1
                 case "Giraffe":
                     giraffeCount += 1
+                case "Chicken":
+                    chickenCount += 1
+                case "Spider":
+                    spiderCount += 1
+                case "Caterpillar":
+                    caterpillarCount += 1
+                case "Penguin":
+                    penguinCount += 1
+                case "Monkey":
+                    monkeyCount += 1
+                case "Eagle":
+                    eagleCount += 1
+                case "Panda":
+                    pandaCount += 1
                 default:
                     return
             }
