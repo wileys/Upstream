@@ -44,6 +44,8 @@ var totalSpecimens: Int {
     }
 }
 
+var collectedList = [String]()
+
 
 
 var width: CGFloat = 0
@@ -74,6 +76,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
+    let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal"]
+    var specimenName = ""
+    
     /* Tutorial thumbs */
     var tutorialLabel: SKLabelNode!
    
@@ -86,8 +91,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             print("SAD")
         }
         
-        dayCount += 1
-         bioDiversity -= 0.10
+        
+        bioDiversity -= 0.10
         gameState = .playing
 
         
@@ -108,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
         
-        if dayCount == 1 {
+        if dayCount == 0 {
             tutorialLabel.isHidden = false
         } else {
             tutorialLabel.isHidden = true
@@ -216,11 +221,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             print(specimenCount)
             
             if nodeA.name == "bonus" {
+                hitBonus()
                 nodeA.removeFromParent()
             }
             
             if nodeB.name == "bonus" {
-                nodeB.removeFromParent()
+                hitBonus()
+                nodeA.removeFromParent()
             }
 
         }
@@ -387,7 +394,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if bonusTimer > 4 {
             
-            /* Random Number Generator */
+    
+            /* Choose a specimen randomly */
+            let arrayMaxIndex = specimensList.count
+            specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
+            
             let rand = arc4random_uniform(100)
             
             var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1650)
@@ -414,7 +425,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
-            
+            newBonus.reference
             bonusTimer = 0
         }
         
@@ -429,8 +440,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         UserDefaults.standard.set(dayCount, forKey: "dayCount")
         
-        let retrieve = UserDefaults.standard.integer(forKey: "dayCount")
-        print(retrieve)
+        UserDefaults.standard.set(lionCount, forKey: "lionCount")
+        
+        UserDefaults.standard.set(sealCount, forKey: "sealCount")
+        
+        UserDefaults.standard.set(goldenCount, forKey: "goldenCount")
+        
+        UserDefaults.standard.set(giraffeCount, forKey: "giraffeCount")
+        
+        
+//        let retrieve = UserDefaults.standard.integer(forKey: "dayCount")
+//        print(retrieve)
 
     }
     
@@ -442,6 +462,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         UserDefaults.standard.set(0.4, forKey: "bioDiversity")
         
+        UserDefaults.standard.set(0, forKey: "lionCount")
+        
+        UserDefaults.standard.set(0, forKey: "sealCount")
+        
+        UserDefaults.standard.set(0, forKey: "goldenCount")
+        
+        UserDefaults.standard.set(0, forKey: "giraffeCount")
+        
+
         
     }
 
@@ -451,10 +480,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             totalSpecimensLabel.text = "\(totalSpecimens)"
             let scroll:SKAction = SKAction.init(named: "ScrollDown")!
             gameOverMenu.run(scroll)
+            dayCount += 1
             return
         }
     }
     
+    func hitBonus() {
+        print(specimenName)
+        collectedList.append(specimenName)
+        
+    }
     
     
 }
