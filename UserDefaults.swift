@@ -146,6 +146,16 @@ var pandaCount: Int {
     
 }
 
+var eventName: String {
+    get {
+        return UserDefaults.standard.string(forKey: "eventName")!
+    }
+    set {
+        UserDefaults.standard.string(forKey: "eventName")
+    }
+    
+}
+
 
 
 

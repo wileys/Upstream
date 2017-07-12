@@ -10,6 +10,8 @@
 import Foundation
 import SpriteKit
 
+var previousBioNumber = 0.4
+
 
 class Earth: SKScene {
     /* UI Connections */
@@ -20,26 +22,41 @@ class Earth: SKScene {
     var bioBar: SKSpriteNode!
     var dayCountLabel: SKLabelNode!
     var populationLabel: SKLabelNode!
-   
-    /* Animal counters */
+    var eventSprite: SKSpriteNode!
+    
+    
     
     
     
     override func didMove(to view: SKView) {
         
+        eventName = "none"
+        
+        eventSprite = childNode(withName: "eventSprite") as! SKSpriteNode
+
+        eventSprite.isHidden = true
+        
         countSpecimens()
-
+        collectedList.removeAll()
         
+        checkForEvent()
+
+
+        /* calling down the biodiversity nubmer */
         let bioNumber = bioDiversity
-
-        /* Setup your scene here */
         
+       
         bioBar = childNode(withName: "bioBar") as! SKSpriteNode
-        
+        bioBar.xScale = CGFloat(previousBioNumber)
         
         /* Make sure bio bar doesn't display negative */
         if bioDiversity > 0 {
-            bioBar.xScale = CGFloat(bioNumber)
+            let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioNumber), duration: 1)
+            let wait:SKAction = SKAction.wait(forDuration: 2)
+            let sequence = SKAction.sequence([scaleBioBar, wait])
+            bioBar.run(sequence)
+            
+            
         } else {
             bioBar.isHidden = true
         }
@@ -51,13 +68,18 @@ class Earth: SKScene {
         populationLabel = childNode(withName: "populationLabel") as! SKLabelNode
         populationLabel.text = String(totalSpecimens)
         
+        if bioNumber < 0.01 {
+            previousBioNumber = 0
+        } else {
+            previousBioNumber = bioDiversity
+
+        }
+        
         /* Play button set up */
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
         playButton.selectedHandler = {
-
             self.loadGame()
-            
         }
 
         /* Gallery button set up */
@@ -66,9 +88,6 @@ class Earth: SKScene {
         galleryButton.selectedHandler = {
             self.loadGallery()
         }
-        
-        
-        /* Count the number of each specimen in the array */
         
         
         
@@ -112,16 +131,8 @@ class Earth: SKScene {
         }
     }
     
-//    func resetUserDefaults() {
-//        
-//        UserDefaults.standard.set(0, forKey: "totalSpecimens")
-//        
-//        UserDefaults.standard.set(0, forKey: "dayCount")
-//        
-//        UserDefaults.standard.set(0.4, forKey: "bioDiversity")
-//        
-//        
-//    }
+    
+    /* Animal counters */
     
     func countSpecimens() {
         for specimen in collectedList {
@@ -151,6 +162,20 @@ class Earth: SKScene {
                 default:
                     return
             }
+        }
+    }
+    
+    /* Checks to see if there's a possible event */
+    
+    func checkForEvent() {
+        /* Overflood of giraffes? Taken care of. */
+        if giraffeCount > 10 {
+            eventName = "giraffeEvent"
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
+            eventSprite.isHidden = false
+            bioDiversity -= 0.1
+            giraffeCount = 0
+            totalSpecimens -= giraffeCount
         }
     }
     

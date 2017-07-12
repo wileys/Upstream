@@ -63,7 +63,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if bioDiversity <= 0.01 {
             resetUserDefaults()
-            print("SAD")
         }
         
         
@@ -196,7 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if nodeA.name == "bonus" || nodeB.name == "bonus" {
             specimenCount += 1
             bioDiversity += 0.01
-            print(specimenCount)
+            
             
             
             if nodeA.name == "bonus" {
@@ -235,7 +234,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if nodeA.name == "obstacle" || nodeB.name == "obstacle" {
             /* change gamestate */
             gameState = .gameOver
-            print("Game over")
+            
             /* Stop the hero from moving and stop the scene from scrolling */
             force = 0
             scrollSpeed = 0
@@ -247,7 +246,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if nodeA.name == "log" || nodeB.name == "log" {
             /* If the hero hits a moving log, stop the game */
             gameState = .gameOver
-            print("Game over")
+            
             force = 0
             scrollSpeed = 0
             character.physicsBody?.velocity = CGVector(dx:0, dy:0)
@@ -422,7 +421,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Add new coins */
             let newBonus = sourceBonus.copy() as! SKNode
             bonusLayer.addChild(newBonus)
-            print("I work")
+            
             
             //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
@@ -452,10 +451,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(eagleCount, forKey: "eagleCount")
         UserDefaults.standard.set(pandaCount, forKey: "pandaCount")
         
-        
-//        let retrieve = UserDefaults.standard.integer(forKey: "dayCount")
-//        print(retrieve)
+        UserDefaults.standard.set(eventName, forKey: "eventName")
 
+        
     }
     
     func resetUserDefaults() {
@@ -520,8 +518,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
-        collectedLabel.text = "\(specimenName) collected ! " + emoji
-        print(specimenName)
+        collectedLabel.text = "\(specimenName) collected! " + emoji
         collectedList.append(specimenName)
         collectedLabel.alpha = 1.0
         let hide:SKAction = SKAction(named: "Hide")!
