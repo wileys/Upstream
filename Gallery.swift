@@ -19,7 +19,8 @@ class Gallery: SKScene {
     var giraffeCountLabel: SKLabelNode!
     var lionCountLabel: SKLabelNode!
     
-    
+    var playButton: MSButtonNode!
+    var earthButton: MSButtonNode!
     
     
     override func didMove(to view: SKView) {
@@ -27,6 +28,17 @@ class Gallery: SKScene {
         lionCountLabel = childNode(withName: "lionCountLabel") as! SKLabelNode
         sealCountLabel = childNode(withName: "sealCountLabel") as! SKLabelNode
         giraffeCountLabel = childNode(withName: "giraffeCountLabel") as! SKLabelNode
+        
+        playButton = childNode(withName: "playButton") as! MSButtonNode
+        earthButton = childNode(withName: "earthButton") as! MSButtonNode
+        
+        playButton.selectedHandler = {
+            self.loadGame()
+        }
+        
+        earthButton.selectedHandler = {
+            self.loadEarth()
+        }
         
         goldenCountLabel.text = String(goldenCount)
         lionCountLabel.text = String(lionCount)
@@ -40,6 +52,25 @@ class Gallery: SKScene {
         if let view = self.view {
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "Earth") {
+                // Set the scale mode to scale to fit the window
+                scene.scaleMode = .aspectFill
+                
+                // Present the scene
+                view.presentScene(scene)
+            }
+            
+            view.ignoresSiblingOrder = true
+            
+            view.showsFPS = true
+            view.showsNodeCount = true
+        }
+    }
+    
+    func loadGame() {
+        /* 1) Grab reference to our SpriteKit view */
+        if let view = self.view {
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "GameScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                 

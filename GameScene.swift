@@ -76,6 +76,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
+    var collectedLabel: SKLabelNode!
+    
+    
     let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal"]
     var specimenName = ""
     
@@ -112,6 +115,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         earthButton = gameOverMenu.childNode(withName: "earthButton") as! MSButtonNode
         
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
+        collectedLabel = childNode(withName: "collectedLabel") as! SKLabelNode
+        
+        collectedLabel.alpha = 0.0
         
         if dayCount == 0 {
             tutorialLabel.isHidden = false
@@ -220,7 +226,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bioDiversity += 0.01
             print(specimenCount)
             
+            
             if nodeA.name == "bonus" {
+            
+//                switch nodeA.color {
+//                case UIColor(red:0.91, green:0.78, blue:0.87, alpha:1.0):
+//                    specimenName = "Lion"
+//                    
+//                case UIColor(red:0.60, green:0.89, blue:0.78, alpha:1.0):
+//                    specimenName = "Seal"
+//                    
+//                case UIColor(red:0.55, green:0.42, blue:0.58, alpha:1.0):
+//                    specimenName = "Golden Retriever"
+//                    
+//                case UIColor(red:0.62, green:0.89, blue:0.49, alpha:1.0):
+//                    specimenName = "Giraffe"
+//                    
+//                default:
+//                    return
+//                }
+
+                
                 hitBonus()
                 nodeA.removeFromParent()
             }
@@ -380,7 +406,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* create bonus objects and scroll them at SAME SPEED as obstacles */
     func scrollBonus() {
         bonusLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
-        for object in bonusLayer.children as! [SKReferenceNode] {
+        for object in bonusLayer.children as! [SKSpriteNode] {
             
             /* gets rid of coins once hit */
             let objectPosition = obstacleLayer.convert(object.position, to: self)
@@ -395,9 +421,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if bonusTimer > 4 {
             
     
-            /* Choose a specimen randomly */
+//             Choose a specimen randomly 
             let arrayMaxIndex = specimensList.count
             specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
+
+            
             
             let rand = arc4random_uniform(100)
             
@@ -422,10 +450,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Add new coins */
             let newBonus = sourceBonus.copy() as! SKNode
             bonusLayer.addChild(newBonus)
+            print("I work")
             
             //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
-            newBonus.reference
+
+    
             bonusTimer = 0
         }
         
@@ -486,11 +516,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func hitBonus() {
+        var emoji = "🦁"
+        switch specimenName {
+        case "Lion":
+            emoji = "🦁"
+        case "Giraffe":
+            emoji = "🦌"
+        case "Golden Retriever":
+            emoji = "🐶"
+        case "Seal":
+            emoji = "🐳"
+        default:
+            return
+        }
+        
+        collectedLabel.text = "\(specimenName) collected ! " + emoji
         print(specimenName)
         collectedList.append(specimenName)
+        collectedLabel.alpha = 1.0
+        let hide:SKAction = SKAction(named: "Hide")!
+        let wait:SKAction = SKAction.wait(forDuration:0.5)
+        let sequence = SKAction.sequence([wait, hide])
+        collectedLabel.run(sequence)
+        
         
     }
     
+    
+
     
 }
 
