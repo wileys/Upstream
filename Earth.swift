@@ -200,10 +200,27 @@ class Earth: SKScene {
         } else if bioDiversity > 0.5 {
             let randomNumber = arc4random_uniform(100)
             if randomNumber >= 50 {
-                chemicalEvent = true
-                print("Chemical event playing")
-                bioDiversity = 0.3
-                eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+                /* Fifty percent chance it goes here */
+                if randomNumber > 60 {
+                    /* twenty percent chance (of the fifty percent) */
+                    if randomNumber > 80 {
+                        chemicalEvent = true
+                        print("Chemical event playing")
+                        bioDiversity = 0.3
+                        eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+                    } else if randomNumber < 80 {
+                        /* twenty percent chance (of the fifty percent) */
+                        print("Heat event playing")
+                        eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent"))
+                        bioDiversity -= 0.2
+                    }
+                } else {
+                    /* ten percent chance of fifty */
+                    bioDiversity += 0.2
+                    print("Hero event playing")
+                    eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
+                }
+            /* forty percent chance nothing happens */
             } else {
                 eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
             }
