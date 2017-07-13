@@ -11,7 +11,7 @@ import Foundation
 import SpriteKit
 
 var previousBioNumber = 0.4
-
+var chemicalEvent = false
 
 class Earth: SKScene {
     /* UI Connections */
@@ -30,11 +30,17 @@ class Earth: SKScene {
     
     override func didMove(to view: SKView) {
         
+    
         eventName = "none"
+        
+        if bioDiversity > 0.5 {
+            
+            eventName = "chemical event"
+            print(eventName)
+        }
         
         eventSprite = childNode(withName: "eventSprite") as! SKSpriteNode
 
-        eventSprite.isHidden = true
         
         countSpecimens()
         collectedList.removeAll()
@@ -172,11 +178,28 @@ class Earth: SKScene {
         if giraffeCount > 10 {
             eventName = "giraffeEvent"
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
-            eventSprite.isHidden = false
             bioDiversity -= 0.1
             giraffeCount = 0
             totalSpecimens -= giraffeCount
+        } else if spiderCount > 10 {
+            eventName = "spiderEvent"
+            bioDiversity += 0.2
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+        
+        } else if bioDiversity > 0.5 {
+            let randomNumber = arc4random_uniform(100)
+            if randomNumber >= 50 {
+                chemicalEvent = true
+                print("Chemical event playing")
+                bioDiversity = 0.3
+                eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+            } else {
+                eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
+            }
+        } else {
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
         }
+        
     }
     
     

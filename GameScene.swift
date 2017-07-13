@@ -48,6 +48,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
+    //var background: SKSpriteNode!
+    
     var collectedLabel: SKLabelNode!
     
     
@@ -64,6 +66,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if bioDiversity <= 0.01 {
             resetUserDefaults()
         }
+        
+       
         
         
         bioDiversity -= 0.10
@@ -88,7 +92,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
         collectedLabel = childNode(withName: "collectedLabel") as! SKLabelNode
         
+        //background = childNode(withName: "background") as! SKSpriteNode
+        
+        for background in scrollLayer.children as! [SKSpriteNode] {
+            if chemicalEvent == true {
+                background.texture = SKTexture(image: #imageLiteral(resourceName: "background orange"))
+            }
+        }
+
+        /* no animals being collected at first */
         collectedLabel.alpha = 0.0
+        
+        /* Show tutorial ? */
         
         if dayCount == 0 {
             tutorialLabel.isHidden = false
@@ -264,6 +279,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         for background in scrollLayer.children as! [SKSpriteNode] {
             /*Get ground node position, convert node position to scene space */
+            
             let bgPosition = scrollLayer.convert(background.position, to: self)
             
             /*Check if ground sprite has left the scene */
@@ -451,6 +467,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(eagleCount, forKey: "eagleCount")
         UserDefaults.standard.set(pandaCount, forKey: "pandaCount")
         
+        
+        
         UserDefaults.standard.set(eventName, forKey: "eventName")
 
         
@@ -474,7 +492,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(0, forKey: "eagleCount")
         UserDefaults.standard.set(0, forKey: "pandaCount")
         
-
+        
+        UserDefaults.standard.set("none", forKey: "eventName")
         
     }
 
