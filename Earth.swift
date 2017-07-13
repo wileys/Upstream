@@ -11,6 +11,20 @@ import Foundation
 import SpriteKit
 
 
+var randomNumber: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "randomNumber")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "randomNumber")
+    }
+    
+}
+
+
+var timesVisited = 0
+
+
 var chemicalEvent = false
 
 class Earth: SKScene {
@@ -26,28 +40,36 @@ class Earth: SKScene {
     var stats: SKSpriteNode!
     
     var earth: SKSpriteNode!
+    var chemicalEarth: SKSpriteNode!
+    
+    var fire: SKNode!
     
     
     override func didMove(to view: SKView) {
+        
+        
+        
+        
+        timesVisited += 1
         
        /* load the earth graphic and animate it to pulse ! */
         earth = childNode(withName: "earthGraphic") as! SKSpriteNode
         let pulse:SKAction = SKAction.init(named:"EarthScale")!
         earth.run(pulse)
         
+        chemicalEarth = childNode(withName: "chemicalEarth") as! SKSpriteNode
+        chemicalEarth.isHidden = true
+        
+        fire = childNode(withName: "fire")
+        fire.isHidden = true
         
         /* default event */
         eventName = "none"
         
+        
         /* set up stats layer to move all stats at once */
         stats = childNode(withName: "stats") as! SKSpriteNode
-        
-        /* this doesn't work yet rip */
-        if bioDiversity > 0.5 {
-            
-            eventName = "chemical event"
-            print(eventName)
-        }
+    
         
         eventSprite = childNode(withName: "eventSprite") as! SKSpriteNode
 
@@ -55,13 +77,20 @@ class Earth: SKScene {
         countSpecimens()
         collectedList.removeAll()
         
-        checkForEvent()
-
+        if timesVisited == 1 {
+            checkForEvent()
+        }
+        
+        if bioDiversity > 1.0 {
+            bioDiversity = 1.0
+        }
+        
+        checkForEventSecond()
 
         /* calling down the biodiversity nubmer */
         let bioNumber = bioDiversity
         
-       
+        
         bioBar = childNode(withName: "bioBar") as! SKSpriteNode
         bioBar.xScale = CGFloat(previousBioNumber)
         
@@ -71,7 +100,6 @@ class Earth: SKScene {
             let wait:SKAction = SKAction.wait(forDuration: 2)
             let sequence = SKAction.sequence([scaleBioBar, wait])
             bioBar.run(sequence)
-            
             
         } else {
             bioBar.isHidden = true
@@ -86,6 +114,8 @@ class Earth: SKScene {
         
         if bioNumber < 0.01 {
             previousBioNumber = 0
+        } else if bioNumber > 1.0 {
+            previousBioNumber = 1
         } else {
             previousBioNumber = bioDiversity
 
@@ -95,6 +125,7 @@ class Earth: SKScene {
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
         playButton.selectedHandler = {
+            self.resetUserDefaults()
             self.loadGame()
         }
 
@@ -184,54 +215,89 @@ class Earth: SKScene {
     /* Checks to see if there's a possible event */
     
     func checkForEvent() {
+        /* Sets an ORIGINAL event */
+        
         /* Overflood of giraffes? Taken care of. */
         if giraffeCount > 10 {
-            eventName = "giraffeEvent"
+            UserDefaults.standard.set("giraffe event", forKey: "eventName")
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
             bioDiversity -= 0.1
             giraffeCount = 0
             totalSpecimens -= giraffeCount
         } else if spiderCount > 10 {
-            eventName = "spiderEvent"
+            UserDefaults.standard.set("spider event", forKey: "eventName")
             bioDiversity += 0.1
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
             spiderCount = 1
         
         } else if bioDiversity > 0.5 {
-            let randomNumber = arc4random_uniform(100)
+            randomNumber = Int(arc4random_uniform(100))
             if randomNumber >= 50 {
                 /* Fifty percent chance it goes here */
                 if randomNumber > 60 {
-                    /* twenty percent chance (of the fifty percent) */
+                    /* twenty percent chance (of the fifty percent) - CHEMICAL FLOOD */
                     if randomNumber > 80 {
                         chemicalEvent = true
-                        print("Chemical event playing")
+                        UserDefaults.standard.set("chemical event", forKey: "eventName")
                         bioDiversity = 0.3
                         eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+                        chemicalEarth.isHidden = false
                     } else if randomNumber < 80 {
-                        /* twenty percent chance (of the fifty percent) */
-                        print("Heat event playing")
+                        /* twenty percent chance (of the fifty percent) - HEAT WAVE */
                         eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent"))
                         bioDiversity -= 0.2
+                        fire.isHidden = false
+                        UserDefaults.standard.set("heat event", forKey: "eventName")
                     }
                 } else {
                     /* ten percent chance of fifty */
+                    UserDefaults.standard.set("hero event", forKey: "eventName")
                     bioDiversity += 0.2
-                    print("Hero event playing")
                     eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
                 }
             /* forty percent chance nothing happens */
             } else {
+                UserDefaults.standard.set("none", forKey: "eventName")
                 eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
             }
         } else {
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
         }
         
+        
+        print(eventName)
+    }
+    
+    /* checks for the event that has already been chosen - this is so that it won't disappear if you 
+     look @ the gallery and then come back */
+    
+    func checkForEventSecond() {
+        switch eventName {
+        case "heat event":
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent"))
+            fire.isHidden = false
+        case "chemical event":
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+            chemicalEarth.isHidden = false
+        case "hero event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
+        case "none": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
+        case "giraffe event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
+        case "spider event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+        default: return
+        }
     }
     
     func setUserDefaults() {
         UserDefaults.standard.set(previousBioNumber, forKey: "previousBioNumber")
+        UserDefaults.standard.set(randomNumber, forKey:"randomNumber")
+        //UserDefaults.standard.set(eventName, forKey: "eventName")
+        print(eventName)
+
+    }
+    
+    func resetUserDefaults() {
+        UserDefaults.standard.set(0, forKey:"randomNumber")
+
     }
     
 }

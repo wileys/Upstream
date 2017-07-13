@@ -16,7 +16,6 @@ enum GameState {
 }
 
 var collectedList = [String]()
-
 let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal", "Chicken", "Spider", "Caterpillar", "Penguin", "Monkey", "Eagle", "Panda"]
 
 
@@ -67,9 +66,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             resetUserDefaults()
         }
         
+        timesVisited = 0
        
-        
-        
         bioDiversity -= 0.10
         gameState = .playing
 
@@ -95,7 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //background = childNode(withName: "background") as! SKSpriteNode
         
         for background in scrollLayer.children as! [SKSpriteNode] {
-            if chemicalEvent == true {
+            if eventName == "chemical event" {
                 background.texture = SKTexture(image: #imageLiteral(resourceName: "background orange"))
             }
         }
@@ -247,26 +245,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* if the hero hits an obstacle, stop all actions in task */
         
         if nodeA.name == "obstacle" || nodeB.name == "obstacle" {
-            /* change gamestate */
-            gameState = .gameOver
-            
-            /* Stop the hero from moving and stop the scene from scrolling */
-            force = 0
-            scrollSpeed = 0
-            character.physicsBody?.velocity = CGVector(dx:0, dy:0)
-            updateUserDefaults()
+            hitObstacle()
             
         }
         
         if nodeA.name == "log" || nodeB.name == "log" {
-            /* If the hero hits a moving log, stop the game */
-            gameState = .gameOver
-            
-            force = 0
-            scrollSpeed = 0
-            character.physicsBody?.velocity = CGVector(dx:0, dy:0)
-            updateUserDefaults()
-            
+            hitObstacle()
         }
         
         checkEnd()
@@ -307,7 +291,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 3.7 {
+        if obstacleTimer > 3.9 {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -366,7 +350,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 3.7 {
+        if logTimer > 3.9 {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -405,7 +389,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer > 3.7 {
+        if bonusTimer > 3.9 {
             
     
 //             Choose a specimen randomly 
@@ -469,7 +453,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         
-        UserDefaults.standard.set(eventName, forKey: "eventName")
 
         
     }
@@ -500,11 +483,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func checkEnd() {
         if gameState == .gameOver {
-            totalSpecimensLabel.text = "\(totalSpecimens)"
-            let scroll:SKAction = SKAction.init(named: "ScrollDown")!
-            gameOverMenu.run(scroll)
-            dayCount += 1
-            return
+            if bioDiversity <= 0.01 {
+                loadGameOver()
+            } else {
+                totalSpecimensLabel.text = "\(totalSpecimens)"
+                let scroll:SKAction = SKAction.init(named: "ScrollDown")!
+                gameOverMenu.run(scroll)
+                dayCount += 1
+                return
+            }
         }
     }
     
@@ -548,8 +535,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func hitObstacle() {
+        /* change gamestate */
+        gameState = .gameOver
+        
+        /* Stop the hero from moving and stop the scene from scrolling */
+        force = 0
+        scrollSpeed = 0
+        character.physicsBody?.velocity = CGVector(dx:0, dy:0)
+        updateUserDefaults()
+        
+        UserDefaults.standard.set("none", forKey: "eventName")
+    }
     
-
+    func loadGameOver() {
+        if let view = self.view {
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "GameOver") {
+                // Set the scale mode to scale to fit the window
+                scene.scaleMode = .aspectFill
+                
+                // Present the scene
+                view.presentScene(scene)
+            }
+            
+            view.ignoresSiblingOrder = true
+            
+            view.showsFPS = true
+            view.showsNodeCount = true
+        }
+    }
     
 }
 
