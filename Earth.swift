@@ -10,7 +10,7 @@
 import Foundation
 import SpriteKit
 
-var previousBioNumber = 0.4
+
 var chemicalEvent = false
 
 class Earth: SKScene {
@@ -23,16 +23,26 @@ class Earth: SKScene {
     var dayCountLabel: SKLabelNode!
     var populationLabel: SKLabelNode!
     var eventSprite: SKSpriteNode!
+    var stats: SKSpriteNode!
     
-    
-    
+    var earth: SKSpriteNode!
     
     
     override func didMove(to view: SKView) {
         
-    
+       /* load the earth graphic and animate it to pulse ! */
+        earth = childNode(withName: "earthGraphic") as! SKSpriteNode
+        let pulse:SKAction = SKAction.init(named:"EarthScale")!
+        earth.run(pulse)
+        
+        
+        /* default event */
         eventName = "none"
         
+        /* set up stats layer to move all stats at once */
+        stats = childNode(withName: "stats") as! SKSpriteNode
+        
+        /* this doesn't work yet rip */
         if bioDiversity > 0.5 {
             
             eventName = "chemical event"
@@ -68,10 +78,10 @@ class Earth: SKScene {
         }
         
         /* update the labels */
-        dayCountLabel = childNode(withName: "dayCountLabel") as! SKLabelNode
+        dayCountLabel = stats.childNode(withName: "dayCountLabel") as! SKLabelNode
         dayCountLabel.text = String(dayCount)
         
-        populationLabel = childNode(withName: "populationLabel") as! SKLabelNode
+        populationLabel = stats.childNode(withName: "populationLabel") as! SKLabelNode
         populationLabel.text = String(totalSpecimens)
         
         if bioNumber < 0.01 {
@@ -95,7 +105,7 @@ class Earth: SKScene {
             self.loadGallery()
         }
         
-        
+        setUserDefaults()
         
     }
     
@@ -183,8 +193,9 @@ class Earth: SKScene {
             totalSpecimens -= giraffeCount
         } else if spiderCount > 10 {
             eventName = "spiderEvent"
-            bioDiversity += 0.2
+            bioDiversity += 0.1
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+            spiderCount = 1
         
         } else if bioDiversity > 0.5 {
             let randomNumber = arc4random_uniform(100)
@@ -202,5 +213,8 @@ class Earth: SKScene {
         
     }
     
+    func setUserDefaults() {
+        UserDefaults.standard.set(previousBioNumber, forKey: "previousBioNumber")
+    }
     
 }

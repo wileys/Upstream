@@ -307,7 +307,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 4 {
+        if obstacleTimer > 3.7 {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -366,7 +366,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 4 {
+        if logTimer > 3.7 {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -405,7 +405,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer > 4 {
+        if bonusTimer > 3.7 {
             
     
 //             Choose a specimen randomly 
@@ -494,7 +494,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         UserDefaults.standard.set("none", forKey: "eventName")
-        
+        UserDefaults.standard.set(0.4, forKey: "previousBioNumber")
     }
 
     

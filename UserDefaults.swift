@@ -156,6 +156,15 @@ var eventName: String {
     
 }
 
+var previousBioNumber: Double {
+    get {
+        return UserDefaults.standard.double(forKey: "previousBioNumber")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "previousBioNumber")
+    }
+    
+}
 
 
 
