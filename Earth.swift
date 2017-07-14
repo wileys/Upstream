@@ -43,12 +43,11 @@ class Earth: SKScene {
     var chemicalEarth: SKSpriteNode!
     
     var fire: SKNode!
+    var wind: SKNode!
     
     
     override func didMove(to view: SKView) {
         print(bioDiversity)
-        
-        
         
         timesVisited += 1
         
@@ -62,6 +61,9 @@ class Earth: SKScene {
         
         fire = childNode(withName: "fire")
         fire.isHidden = true
+        
+        wind = childNode(withName: "wind")
+        wind.isHidden = true
         
         /* default event */
         eventName = "none"
@@ -236,7 +238,6 @@ class Earth: SKScene {
             }
         
         } else {
-            
             setEventToNone()
         }
         print(eventName)
@@ -257,7 +258,9 @@ class Earth: SKScene {
         case "none": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
         case "giraffe event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
         case "spider event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
-        case "wind event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
+        case "wind event":
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
+            wind.isHidden = false
         case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent"))
         default: return
         }
@@ -295,6 +298,7 @@ class Earth: SKScene {
     func playWindEvent() {
         if hasDoneWindEvent == false {
             hasDoneWindEvent = true
+            wind.isHidden = false
             UserDefaults.standard.set("wind event", forKey: "eventName")
             bioDiversity -= 0.05
             eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "windevent"))

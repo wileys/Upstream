@@ -35,9 +35,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var sourceObstacle: SKNode!
     var obstacleLayer: SKNode!
     var bonusLayer: SKNode!
-    var obstacleTimer: CFTimeInterval = 0
-    var bonusTimer: CFTimeInterval = 0
-    var logTimer: CFTimeInterval = 0
+    var obstacleTimer: CFTimeInterval = 3
+    var bonusTimer: CFTimeInterval = 3
+    var logTimer: CFTimeInterval = 3
     var sourceBonus: SKNode!
     var logLayer: SKNode!
     var sourceLog: SKNode!
@@ -269,14 +269,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 3.9 {
+        if obstacleTimer > 4 {
             
             /* has to be SKNode bc it's a reference node */
             
             let newObstacle = sourceObstacle.copy() as! SKNode
             obstacleLayer.addChild(newObstacle)
             
-            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1334)
+            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1394)
             newObstacle.position = self.convert(randomPosition, to: obstacleLayer)
             
             obstacleTimer = 0
@@ -328,7 +328,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 3.9 {
+        if logTimer > 4 {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -336,7 +336,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1524)
+            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1600)
             newLog.position = self.convert(logPosition, to: logLayer)
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
@@ -367,7 +367,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer > 3.9 {
+        if bonusTimer > 4 {
             
     
 //             Choose a specimen randomly 
@@ -378,22 +378,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let rand = arc4random_uniform(100)
             
-            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1650)
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1710)
             
             
             if rand < 70 {
                 /* 35% chance of a left side */
-                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1650)
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1710)
                 
                 if rand < 35 {
                     /* 35% chance of a right side */
-                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1650)
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1710)
                 }
             }
                 
             else {
                 /* 30% chance of middle  */
-                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1650)
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1710)
             }
             
             /* Add new coins */
