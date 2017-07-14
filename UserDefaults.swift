@@ -167,6 +167,58 @@ var previousBioNumber: Double {
 }
 
 
+var hasDoneHeatEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneHeatEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneHeatEvent")
+    }
+    
+}
+
+var hasDoneHeroEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneHeroEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneHeroEvent")
+    }
+    
+}
+
+var hasDoneChemicalEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneChemicalEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneChemicalEvent")
+    }
+    
+}
+
+var hasDoneWindEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneWindEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneWindEvent")
+    }
+    
+}
+
+var hasDoneDroughtEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneDroughtEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneDroughtEvent")
+    }
+    
+}
+
+
+
 
 
 

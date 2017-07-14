@@ -61,7 +61,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
-        
+        bioDiversity = 0.5
         if bioDiversity <= 0.01 {
             resetUserDefaults()
         }
@@ -209,28 +209,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             specimenCount += 1
             bioDiversity += 0.01
             
-            
-            
             if nodeA.name == "bonus" {
-            
-//                switch nodeA.color {
-//                case UIColor(red:0.91, green:0.78, blue:0.87, alpha:1.0):
-//                    specimenName = "Lion"
-//                    
-//                case UIColor(red:0.60, green:0.89, blue:0.78, alpha:1.0):
-//                    specimenName = "Seal"
-//                    
-//                case UIColor(red:0.55, green:0.42, blue:0.58, alpha:1.0):
-//                    specimenName = "Golden Retriever"
-//                    
-//                case UIColor(red:0.62, green:0.89, blue:0.49, alpha:1.0):
-//                    specimenName = "Giraffe"
-//                    
-//                default:
-//                    return
-//                }
-
-                
                 hitBonus()
                 nodeA.removeFromParent()
             }
@@ -433,12 +412,59 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func updateUserDefaults() {
+        /* updates every time game scene is displayed */
         
-        totalSpecimens += specimenCount
+        
+        /* sets the events ocurring or not */
+        UserDefaults.standard.set(hasDoneHeatEvent, forKey: "hasDoneHeatEvent")
+        UserDefaults.standard.set(hasDoneHeroEvent, forKey: "hasDoneHeroEvent")
+        UserDefaults.standard.set(hasDoneChemicalEvent, forKey: "hasDoneChemicalEvent")
+        UserDefaults.standard.set(hasDoneWindEvent, forKey: "hasDoneWindEvent")
+        UserDefaults.standard.set(hasDoneDroughtEvent, forKey: "hasDoneDroughtEvent")
+
+        
+    }
+
+    func levelOver() {
+        
+        /* Animal counters */
+        
+        for specimen in collectedList {
+            switch specimen {
+            case "Lion":
+                lionCount += 1
+            case "Seal":
+                sealCount += 1
+            case "Golden Retriever":
+                goldenCount += 1
+            case "Giraffe":
+                giraffeCount += 1
+            case "Chicken":
+                chickenCount += 1
+            case "Spider":
+                spiderCount += 1
+            case "Caterpillar":
+                caterpillarCount += 1
+            case "Penguin":
+                penguinCount += 1
+            case "Monkey":
+                monkeyCount += 1
+            case "Eagle":
+                eagleCount += 1
+            case "Panda":
+                pandaCount += 1
+            default:
+                return
+            }
+        }
+        
+        
+        /* User defaults */
+        
         UserDefaults.standard.set(totalSpecimens, forKey: "totalSpecimens")
         UserDefaults.standard.set(bioDiversity, forKey: "bioDiversity")
         UserDefaults.standard.set(dayCount, forKey: "dayCount")
-        
+
         UserDefaults.standard.set(lionCount, forKey: "lionCount")
         UserDefaults.standard.set(sealCount, forKey: "sealCount")
         UserDefaults.standard.set(goldenCount, forKey: "goldenCount")
@@ -450,11 +476,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(monkeyCount, forKey: "monkeyCount")
         UserDefaults.standard.set(eagleCount, forKey: "eagleCount")
         UserDefaults.standard.set(pandaCount, forKey: "pandaCount")
-        
-        
-        
 
-        
     }
     
     func resetUserDefaults() {
@@ -475,10 +497,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(0, forKey: "eagleCount")
         UserDefaults.standard.set(0, forKey: "pandaCount")
         
-        
+        /* resets events and where to start biobar scaling from */
         UserDefaults.standard.set("none", forKey: "eventName")
         UserDefaults.standard.set(0.4, forKey: "previousBioNumber")
+        
+        /* resets whether or not events have already ocurred */
+        UserDefaults.standard.set(false, forKey: "hasDoneHeatEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneHeroEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneChemicalEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneWindEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneDroughtEvent")
+        
     }
+    
 
     
     func checkEnd() {
@@ -486,10 +517,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if bioDiversity <= 0.01 {
                 loadGameOver()
             } else {
+                totalSpecimens += specimenCount
                 totalSpecimensLabel.text = "\(totalSpecimens)"
                 let scroll:SKAction = SKAction.init(named: "ScrollDown")!
                 gameOverMenu.run(scroll)
                 dayCount += 1
+                levelOver()
                 return
             }
         }
