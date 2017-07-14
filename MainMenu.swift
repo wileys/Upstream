@@ -24,9 +24,8 @@ class MainMenu: SKScene {
         }
         
         earth = childNode(withName: "earth") as! SKSpriteNode
-        let rotate:SKAction! = SKAction.init(named:"EarthScale")
-        earth.run(rotate)
-        
+        let tinyEarthScale:SKAction! = SKAction.init(named:"TinyEarthScale")
+        earth.run(tinyEarthScale)
         
     }
     
