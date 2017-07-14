@@ -223,19 +223,20 @@ class Earth: SKScene {
                 }
             } else { /* if biodiversity is between 0.3 and 0.5 */
                 randomNumber = Int(arc4random_uniform(100))
-                if randomNumber >= 0 {
-                    if randomNumber > 0 {
+                
+                if randomNumber >= 60 {
+                    if randomNumber >= 80 {
                         playWindEvent()
                     }
-//                 else if randomNumber < 80 {
-//
-//                }
+                 else if randomNumber < 80 {
+
+                 }
                     
                 }
             }
         
-        }
-        else {
+        } else {
+            
             setEventToNone()
         }
         print(eventName)

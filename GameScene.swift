@@ -61,7 +61,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
-        bioDiversity = 0.5
         if bioDiversity <= 0.01 {
             resetUserDefaults()
         }
