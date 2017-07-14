@@ -16,7 +16,7 @@ enum GameState {
 }
 
 var collectedList = [String]()
-let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal", "Chicken", "Spider", "Caterpillar", "Penguin", "Monkey", "Eagle", "Panda"]
+let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal", "Chicken", "Spider", "Caterpillar", "Penguin", "Monkey", "Eagle", "Panda", "Fox", "Butterfly", "Snake", "Shark", "Rabbit", "Octopus", "Cow"]
 
 
 var width: CGFloat = 0
@@ -452,6 +452,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 eagleCount += 1
             case "Panda":
                 pandaCount += 1
+            case "Fox":
+                foxCount += 1
+            case "Butterfly":
+                butterflyCount += 1
+            case "Snake":
+                snakeCount += 1
+            case "Shark":
+                sharkCount += 1
+            case "Rabbit":
+                rabbitCount += 1
+            case "Octopus":
+                octopusCount += 1
+            case "Cow":
+                cowCount += 1
             default:
                 return
             }
@@ -475,6 +489,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(monkeyCount, forKey: "monkeyCount")
         UserDefaults.standard.set(eagleCount, forKey: "eagleCount")
         UserDefaults.standard.set(pandaCount, forKey: "pandaCount")
+        UserDefaults.standard.set(foxCount, forKey: "foxCount")
+        UserDefaults.standard.set(butterflyCount, forKey: "butterflyCount")
+        UserDefaults.standard.set(snakeCount, forKey: "snakeCount")
+        UserDefaults.standard.set(sharkCount, forKey: "sharkCount")
+        UserDefaults.standard.set(rabbitCount, forKey: "rabbitCount")
+        UserDefaults.standard.set(octopusCount, forKey: "octopusCount")
+        UserDefaults.standard.set(cowCount, forKey: "cowCount")
 
     }
     
@@ -495,6 +516,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(0, forKey: "monkeyCount")
         UserDefaults.standard.set(0, forKey: "eagleCount")
         UserDefaults.standard.set(0, forKey: "pandaCount")
+        UserDefaults.standard.set(0, forKey: "foxCount")
+        UserDefaults.standard.set(0, forKey: "butterflyCount")
+        UserDefaults.standard.set(0, forKey: "snakeCount")
+        UserDefaults.standard.set(0, forKey: "sharkCount")
+        UserDefaults.standard.set(0, forKey: "rabbitCount")
+        UserDefaults.standard.set(0, forKey: "octopusCount")
+        UserDefaults.standard.set(0, forKey: "cowCount")
         
         /* resets events and where to start biobar scaling from */
         UserDefaults.standard.set("none", forKey: "eventName")
@@ -552,6 +580,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             emoji = "🦅"
         case "Panda":
             emoji = "🐼"
+        case "Fox":
+            emoji = "🦊"
+        case "Butterfly":
+            emoji = "🦋"
+        case "Snake":
+            emoji = "🐍"
+        case "Shark":
+            emoji = "🦈"
+        case "Rabbit":
+            emoji = "🐇"
+        case "Octopus":
+            emoji = "🐙"
+        case "Cow":
+            emoji = "🐄"
         default:
             return
         }

@@ -146,6 +146,76 @@ var pandaCount: Int {
     
 }
 
+var foxCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "foxCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "foxCount")
+    }
+    
+}
+
+var butterflyCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "butterflyCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "butterflyCount")
+    }
+    
+}
+
+var snakeCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "snakeCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "snakeCount")
+    }
+    
+}
+
+var sharkCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "sharkCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "sharkCount")
+    }
+    
+}
+
+var rabbitCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "rabbitCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "rabbitCount")
+    }
+    
+}
+
+var octopusCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "octopusCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "octopusCount")
+    }
+    
+}
+
+var cowCount: Int {
+    get {
+        return UserDefaults.standard.integer(forKey: "cowCount")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "cowCount")
+    }
+    
+}
+
 var eventName: String {
     get {
         return UserDefaults.standard.string(forKey: "eventName")!

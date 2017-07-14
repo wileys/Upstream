@@ -25,6 +25,13 @@ class Gallery: SKScene {
     var monkeyCountLabel: SKLabelNode!
     var eagleCountLabel: SKLabelNode!
     var pandaCountLabel: SKLabelNode!
+    var foxCountLabel: SKLabelNode!
+    var butterflyCountLabel: SKLabelNode!
+    var snakeCountLabel: SKLabelNode!
+    var sharkCountLabel: SKLabelNode!
+    var rabbitCountLabel: SKLabelNode!
+    var octopusCountLabel: SKLabelNode!
+    var cowCountLabel: SKLabelNode!
     
     var playButton: MSButtonNode!
     var earthButton: MSButtonNode!
@@ -42,6 +49,13 @@ class Gallery: SKScene {
         monkeyCountLabel = childNode(withName: "monkeyCountLabel") as! SKLabelNode
         eagleCountLabel = childNode(withName: "eagleCountLabel") as! SKLabelNode
         pandaCountLabel = childNode(withName: "pandaCountLabel") as! SKLabelNode
+        foxCountLabel = childNode(withName: "foxCountLabel") as! SKLabelNode
+        butterflyCountLabel = childNode(withName: "butterflyCountLabel") as! SKLabelNode
+        snakeCountLabel = childNode(withName: "snakeCountLabel") as! SKLabelNode
+        sharkCountLabel = childNode(withName: "sharkCountLabel") as! SKLabelNode
+        rabbitCountLabel = childNode(withName: "rabbitCountLabel") as! SKLabelNode
+        octopusCountLabel = childNode(withName: "octopusCountLabel") as! SKLabelNode
+        cowCountLabel = childNode(withName: "cowCountLabel") as! SKLabelNode
 
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
@@ -66,6 +80,14 @@ class Gallery: SKScene {
         monkeyCountLabel.text = String(monkeyCount)
         eagleCountLabel.text = String(eagleCount)
         pandaCountLabel.text = String(pandaCount)
+        foxCountLabel.text = String(foxCount)
+        butterflyCountLabel.text = String(pandaCount)
+        snakeCountLabel.text = String(snakeCount)
+        sharkCountLabel.text = String(sharkCount)
+        rabbitCountLabel.text = String(rabbitCount)
+        octopusCountLabel.text = String(octopusCount)
+        cowCountLabel.text = String(cowCount)
+        
     }
     
     func loadEarth() {
