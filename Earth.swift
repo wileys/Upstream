@@ -229,7 +229,7 @@ class Earth: SKScene {
                         playWindEvent()
                     }
                  else if randomNumber < 80 {
-
+                        playDroughtEvent()
                  }
                     
                 }
@@ -257,6 +257,8 @@ class Earth: SKScene {
         case "none": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
         case "giraffe event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
         case "spider event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+        case "wind event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
+        case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent"))
         default: return
         }
     }
