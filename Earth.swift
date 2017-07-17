@@ -26,7 +26,6 @@ var timesVisited = 0
 
 
 var chemicalEvent = false
-
 class Earth: SKScene {
     /* UI Connections */
     
@@ -45,12 +44,22 @@ class Earth: SKScene {
     var fire: SKNode!
     var wind: SKNode!
     
+    var alertBox: SKSpriteNode!
+    /* Yes & no buttons */
+    var yesButton: MSButtonNode!
+    var noButton: MSButtonNode!
+    var alertMessage: SKSpriteNode!
+    
+    var background: SKSpriteNode!
     
     override func didMove(to view: SKView) {
         print(bioDiversity)
-        
         timesVisited += 1
         
+
+        
+        background = childNode(withName: "background") as! SKSpriteNode
+                
        /* load the earth graphic and animate it to pulse ! */
         earth = childNode(withName: "earthGraphic") as! SKSpriteNode
         let pulse:SKAction = SKAction.init(named:"EarthScale")!
@@ -74,7 +83,14 @@ class Earth: SKScene {
     
         
         eventSprite = childNode(withName: "eventSprite") as! SKSpriteNode
-
+        
+        
+        /* Alert box set up */
+        alertBox = childNode(withName: "alertBox") as! SKSpriteNode
+        alertBox.isHidden = true
+        alertMessage = alertBox.childNode(withName: "alertMessage") as! SKSpriteNode
+        yesButton = alertBox.childNode(withName: "yesButton") as! MSButtonNode
+        noButton = alertBox.childNode(withName: "noButton") as! MSButtonNode
         
         //countSpecimens()
         collectedList.removeAll()
@@ -92,6 +108,7 @@ class Earth: SKScene {
         /* calling down the biodiversity nubmer */
         let bioNumber = bioDiversity
         
+        /* Bio bar scale action */
         
         bioBar = childNode(withName: "bioBar") as! SKSpriteNode
         bioBar.xScale = CGFloat(previousBioNumber)
@@ -101,6 +118,7 @@ class Earth: SKScene {
             let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioNumber), duration: 1)
             let wait:SKAction = SKAction.wait(forDuration: 2)
             let sequence = SKAction.sequence([scaleBioBar, wait])
+            
             bioBar.run(sequence)
             
         } else {
@@ -203,26 +221,29 @@ class Earth: SKScene {
         
         } else if bioDiversity > 0.3 {
             if bioDiversity > 0.5 {
-                randomNumber = Int(arc4random_uniform(100))
-                if randomNumber >= 50 {
-                    
-                    /* Fifty percent chance it goes here */
-                    if randomNumber > 60 {
-                        /* twenty percent chance (of the fifty percent) - CHEMICAL FLOOD */
-                        if randomNumber > 80 {
-                            playChemicalEvent()
-                        } else if randomNumber < 80 {
-                            /* twenty percent chance (of the fifty percent) - HEAT WAVE */
-                            playHeatEvent()
-                        }
-                    } else {
-                        /* ten percent chance of fifty */
-                        playHeroEvent()
-                    }
-                /* forty percent chance nothing happens */
-                } else {
-                    setEventToNone()
-                }
+//                randomNumber = Int(arc4random_uniform(100))
+//                if randomNumber >= 50 {
+//                    
+//                    /* Fifty percent chance it goes here */
+//                    if randomNumber > 60 {
+//                        /* twenty percent chance (of the fifty percent) - CHEMICAL FLOOD */
+//                        if randomNumber > 80 {
+//                            playChemicalEvent()
+//                        } else if randomNumber < 80 {
+//                            /* twenty percent chance (of the fifty percent) - HEAT WAVE */
+//                            playHeatEvent()
+//                        }
+//                    } else {
+//                        /* ten percent chance of fifty */
+//                        playHeroEvent()
+//                    }
+//                /* forty percent chance nothing happens */
+//                } else {
+//                    setEventToNone()
+//                }
+
+                playChemicalEvent()
+                
             } else { /* if biodiversity is between 0.3 and 0.5 */
                 randomNumber = Int(arc4random_uniform(100))
                 
@@ -230,11 +251,10 @@ class Earth: SKScene {
                     if randomNumber >= 80 {
                         playWindEvent()
                     }
-                 else if randomNumber < 80 {
+                else if randomNumber < 80 {
                         playDroughtEvent()
-                 }
-                    
                 }
+            }
             }
         
         } else {
@@ -268,11 +288,29 @@ class Earth: SKScene {
     
     func playChemicalEvent() {
         if hasDoneChemicalEvent == false {
-            UserDefaults.standard.set("chemical event", forKey: "eventName")
-            hasDoneChemicalEvent = true
-            bioDiversity = 0.3
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
-            chemicalEarth.isHidden = false
+            alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "zombie question"))
+            alertBox.isHidden = false
+            background.zPosition = 5
+            
+            noButton.selectedHandler = {
+                UserDefaults.standard.set("chemical event", forKey: "eventName")
+                hasDoneChemicalEvent = true
+                bioDiversity = 0.5
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+                self.chemicalEarth.isHidden = false
+                self.alertButtonClicked()
+                
+            }
+            
+            /* Button actions */
+            
+            yesButton.selectedHandler = {
+                bioDiversity = 0
+                self.alertButtonClicked()
+            }
+        } else {
+            checkForEvent()
+            print("Checked")
         }
     }
     
@@ -283,15 +321,38 @@ class Earth: SKScene {
             bioDiversity -= 0.2
             fire.isHidden = false
             UserDefaults.standard.set("heat event", forKey: "eventName")
+        } else {
+            checkForEvent()
+            print("Checked")
         }
     }
     
     func playHeroEvent() {
+        /* Make sure the buttons are untoucheable */
+        
         if hasDoneHeroEvent == false {
-            hasDoneHeroEvent = true
-            UserDefaults.standard.set("hero event", forKey: "eventName")
-            bioDiversity += 0.2
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
+            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "aliens question"))
+            alertBox.isHidden = false
+            background.zPosition = 5
+            noButton.selectedHandler = {
+                /* show the event! */
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
+                hasDoneHeroEvent = true
+                UserDefaults.standard.set("hero event", forKey: "eventName")
+                bioDiversity += 0.2
+                self.alertButtonClicked()
+                
+            }
+            
+            yesButton.selectedHandler = {
+                /* don't show the event */
+                self.alertButtonClicked()
+                return
+
+            }
+        } else {
+            checkForEvent()
+            print("Checked")
         }
     }
     
@@ -329,10 +390,21 @@ class Earth: SKScene {
     }
     
     
-    
+    /* resets the defaults - defaults the random event number */
     func resetUserDefaults() {
         UserDefaults.standard.set(0, forKey:"randomNumber")
 
+    }
+    
+    /* this is the general thing to do when an alert message button is pressed */
+    func alertButtonClicked() {
+        self.alertBox.isHidden = true
+        self.bioBar.xScale = CGFloat(previousBioNumber)
+        let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioDiversity), duration: 1)
+        let wait:SKAction = SKAction.wait(forDuration: 2)
+        let sequence = SKAction.sequence([scaleBioBar, wait])
+        self.bioBar.run(sequence)
+        self.background.zPosition = 0
     }
     
 }
