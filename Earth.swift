@@ -56,6 +56,7 @@ class Earth: SKScene {
         print(bioDiversity)
         timesVisited += 1
         
+        bioDiversity = 0.4
 
         
         background = childNode(withName: "background") as! SKSpriteNode
@@ -221,28 +222,26 @@ class Earth: SKScene {
         
         } else if bioDiversity > 0.3 {
             if bioDiversity > 0.5 {
-//                randomNumber = Int(arc4random_uniform(100))
-//                if randomNumber >= 50 {
-//                    
-//                    /* Fifty percent chance it goes here */
-//                    if randomNumber > 60 {
-//                        /* twenty percent chance (of the fifty percent) - CHEMICAL FLOOD */
-//                        if randomNumber > 80 {
-//                            playChemicalEvent()
-//                        } else if randomNumber < 80 {
-//                            /* twenty percent chance (of the fifty percent) - HEAT WAVE */
-//                            playHeatEvent()
-//                        }
-//                    } else {
-//                        /* ten percent chance of fifty */
-//                        playHeroEvent()
-//                    }
-//                /* forty percent chance nothing happens */
-//                } else {
-//                    setEventToNone()
-//                }
-
-                playChemicalEvent()
+                randomNumber = Int(arc4random_uniform(100))
+                if randomNumber >= 50 {
+                    
+                    /* Fifty percent chance it goes here */
+                    if randomNumber > 60 {
+                        /* twenty percent chance (of the fifty percent) - CHEMICAL FLOOD */
+                        if randomNumber > 80 {
+                            playChemicalEvent()
+                        } else if randomNumber < 80 {
+                            /* twenty percent chance (of the fifty percent) - HEAT WAVE */
+                            playHeatEvent()
+                        }
+                    } else {
+                        /* ten percent chance of fifty */
+                        playHeroEvent()
+                    }
+                /* forty percent chance nothing happens */
+                } else {
+                    setEventToNone()
+                }
                 
             } else { /* if biodiversity is between 0.3 and 0.5 */
                 randomNumber = Int(arc4random_uniform(100))
@@ -251,9 +250,13 @@ class Earth: SKScene {
                     if randomNumber >= 80 {
                         playWindEvent()
                     }
-                else if randomNumber < 80 {
-                        playDroughtEvent()
-                }
+                    else if randomNumber < 80 {
+                        if randomNumber <= 70 {
+                            playDroughtEvent()
+                        } else if randomNumber > 70 {
+                            playWeatherEvent()
+                        }
+                    }
             }
             }
         
@@ -282,17 +285,22 @@ class Earth: SKScene {
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
             wind.isHidden = false
         case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent"))
+        case "weather event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent"))
         default: return
         }
     }
     
+    
     func playChemicalEvent() {
         if hasDoneChemicalEvent == false {
+            /* pop up box sent */
             alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "zombie question"))
             alertBox.isHidden = false
             background.zPosition = 5
+        
+            /* Button actions */
             
-            noButton.selectedHandler = {
+            yesButton.selectedHandler = {
                 UserDefaults.standard.set("chemical event", forKey: "eventName")
                 hasDoneChemicalEvent = true
                 bioDiversity = 0.5
@@ -302,9 +310,7 @@ class Earth: SKScene {
                 
             }
             
-            /* Button actions */
-            
-            yesButton.selectedHandler = {
+            noButton.selectedHandler = {
                 bioDiversity = 0
                 self.alertButtonClicked()
             }
@@ -372,6 +378,35 @@ class Earth: SKScene {
             UserDefaults.standard.set("drought event", forKey: "eventName")
             bioDiversity -= 0.1
             eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "droughtevent"))
+        }
+    }
+
+    func playWeatherEvent() {
+    
+        if hasDoneWeatherEvent == false {
+            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "weather question"))
+            alertBox.isHidden = false
+            background.zPosition = 5
+            noButton.selectedHandler = {
+                /* show the event! */
+                hasDoneWeatherEvent = true
+                UserDefaults.standard.set("weather event", forKey: "eventName")
+                bioDiversity -= 0.2
+                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "weatherevent"))
+                self.alertButtonClicked()
+            }
+            
+            yesButton.selectedHandler = {
+                /* show the event but without a decrease in biodiversity */
+                hasDoneWeatherEvent = true
+                UserDefaults.standard.set("weather event", forKey: "eventName")
+                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "weatherevent"))
+                self.alertButtonClicked()
+                return
+                
+            }
+
+           
         }
     }
 

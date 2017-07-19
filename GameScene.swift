@@ -30,7 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameState: GameState = .playing
     var force: CGFloat = 1400
     var scrollLayer: SKNode!
-    var scrollSpeed: CGFloat = 160
+    var scrollSpeed: CGFloat = 200
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
     var sourceObstacle: SKNode!
     var obstacleLayer: SKNode!
@@ -47,7 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
-    //var background: SKSpriteNode!
+    
     
     var collectedLabel: SKLabelNode!
     
@@ -90,7 +90,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
         collectedLabel = childNode(withName: "collectedLabel") as! SKLabelNode
         
-        //background = childNode(withName: "background") as! SKSpriteNode
         
         for background in scrollLayer.children as! [SKSpriteNode] {
             if eventName == "chemical event" {
@@ -270,7 +269,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 6 {
+        if obstacleTimer > 4 {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -329,7 +328,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 6 {
+        if logTimer > 4 {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -337,7 +336,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1780)
+            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1700)
             newLog.position = self.convert(logPosition, to: logLayer)
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
@@ -368,7 +367,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer >= 3 {
+        if bonusTimer >= 2 {
             
     
 //             Choose a specimen randomly 
@@ -379,22 +378,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let rand = arc4random_uniform(100)
             
-            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 2100)
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1750)
             
             
             if rand < 70 {
                 /* 35% chance of a left side */
-                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 2100)
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1750)
                 
                 if rand < 35 {
                     /* 35% chance of a right side */
-                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 2100)
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1750)
                 }
             }
                 
             else {
                 /* 30% chance of middle  */
-                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 2100)
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1750)
             }
             
             /* Add new coins */
@@ -421,6 +420,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(hasDoneChemicalEvent, forKey: "hasDoneChemicalEvent")
         UserDefaults.standard.set(hasDoneWindEvent, forKey: "hasDoneWindEvent")
         UserDefaults.standard.set(hasDoneDroughtEvent, forKey: "hasDoneDroughtEvent")
+        UserDefaults.standard.set(hasDoneWeatherEvent, forKey: "hasDoneWeatherEvent")
 
         
     }
@@ -535,6 +535,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(false, forKey: "hasDoneChemicalEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneWindEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneDroughtEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneWeatherEvent")
         
     }
     
