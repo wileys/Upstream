@@ -14,6 +14,8 @@ import SpriteKit
 class Gallery: SKScene {
     /* UI Connections */
     
+    var grid: SKSpriteNode!
+    
     var goldenCountLabel: SKLabelNode!
     var sealCountLabel: SKLabelNode!
     var giraffeCountLabel: SKLabelNode!
@@ -36,27 +38,47 @@ class Gallery: SKScene {
     var playButton: MSButtonNode!
     var earthButton: MSButtonNode!
     
+    /* animals that fall in */
+    
+    var sourceGolden: SKSpriteNode!
+    var sourceLion: SKSpriteNode!
+    var sourceSeal:SKSpriteNode!
+    var sourceGiraffe: SKSpriteNode!
+    var sourceChicken: SKSpriteNode!
+//    var sourceSpider: SKSpriteNode!
+    
     
     override func didMove(to view: SKView) {
-        goldenCountLabel = childNode(withName: "goldenCountLabel") as! SKLabelNode
-        lionCountLabel = childNode(withName: "lionCountLabel") as! SKLabelNode
-        sealCountLabel = childNode(withName: "sealCountLabel") as! SKLabelNode
-        giraffeCountLabel = childNode(withName: "giraffeCountLabel") as! SKLabelNode
-        chickenCountLabel = childNode(withName: "chickenCountLabel") as! SKLabelNode
-        spiderCountLabel = childNode(withName: "spiderCountLabel") as! SKLabelNode
-        caterpillarCountLabel = childNode(withName: "caterpillarCountLabel") as! SKLabelNode
-        penguinCountLabel = childNode(withName: "penguinCountLabel") as! SKLabelNode
-        monkeyCountLabel = childNode(withName: "monkeyCountLabel") as! SKLabelNode
-        eagleCountLabel = childNode(withName: "eagleCountLabel") as! SKLabelNode
-        pandaCountLabel = childNode(withName: "pandaCountLabel") as! SKLabelNode
-        foxCountLabel = childNode(withName: "foxCountLabel") as! SKLabelNode
-        butterflyCountLabel = childNode(withName: "butterflyCountLabel") as! SKLabelNode
-        snakeCountLabel = childNode(withName: "snakeCountLabel") as! SKLabelNode
-        sharkCountLabel = childNode(withName: "sharkCountLabel") as! SKLabelNode
-        rabbitCountLabel = childNode(withName: "rabbitCountLabel") as! SKLabelNode
-        octopusCountLabel = childNode(withName: "octopusCountLabel") as! SKLabelNode
-        cowCountLabel = childNode(withName: "cowCountLabel") as! SKLabelNode
+        
+        grid = childNode(withName: "grid") as! SKSpriteNode
+        
+        goldenCountLabel = grid.childNode(withName: "goldenCountLabel") as! SKLabelNode
+        lionCountLabel = grid.childNode(withName: "lionCountLabel") as! SKLabelNode
+        sealCountLabel = grid.childNode(withName: "sealCountLabel") as! SKLabelNode
+        giraffeCountLabel = grid.childNode(withName: "giraffeCountLabel") as! SKLabelNode
+        chickenCountLabel = grid.childNode(withName: "chickenCountLabel") as! SKLabelNode
+        spiderCountLabel = grid.childNode(withName: "spiderCountLabel") as! SKLabelNode
+        caterpillarCountLabel = grid.childNode(withName: "caterpillarCountLabel") as! SKLabelNode
+        penguinCountLabel = grid.childNode(withName: "penguinCountLabel") as! SKLabelNode
+        monkeyCountLabel = grid.childNode(withName: "monkeyCountLabel") as! SKLabelNode
+        eagleCountLabel = grid.childNode(withName: "eagleCountLabel") as! SKLabelNode
+        pandaCountLabel = grid.childNode(withName: "pandaCountLabel") as! SKLabelNode
+        foxCountLabel = grid.childNode(withName: "foxCountLabel") as! SKLabelNode
+        butterflyCountLabel = grid.childNode(withName: "butterflyCountLabel") as! SKLabelNode
+        snakeCountLabel = grid.childNode(withName: "snakeCountLabel") as! SKLabelNode
+        sharkCountLabel = grid.childNode(withName: "sharkCountLabel") as! SKLabelNode
+        rabbitCountLabel = grid.childNode(withName: "rabbitCountLabel") as! SKLabelNode
+        octopusCountLabel = grid.childNode(withName: "octopusCountLabel") as! SKLabelNode
+        cowCountLabel = grid.childNode(withName: "cowCountLabel") as! SKLabelNode
+        
+        /* animals that fall in */
 
+        sourceGolden = childNode(withName: "sourceGolden") as! SKSpriteNode
+        sourceLion = childNode(withName: "sourceLion") as! SKSpriteNode
+        sourceSeal = childNode(withName: "sourceSeal") as! SKSpriteNode
+        sourceGiraffe = childNode(withName: "sourceGiraffe") as! SKSpriteNode
+        sourceChicken = childNode(withName: "sourceChicken") as! SKSpriteNode
+//        sourceSpider = childNode(withName: "sourceSpider") as! SKSpriteNode
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
@@ -88,6 +110,13 @@ class Gallery: SKScene {
         octopusCountLabel.text = String(octopusCount)
         cowCountLabel.text = String(cowCount)
         
+        specimensFall(animalCount: goldenCount, sourceAnimal: sourceGolden)
+        specimensFall(animalCount: lionCount, sourceAnimal: sourceLion)
+        specimensFall(animalCount: sealCount, sourceAnimal: sourceSeal)
+        specimensFall(animalCount: giraffeCount, sourceAnimal: sourceGiraffe)
+        specimensFall(animalCount: chickenCount, sourceAnimal: sourceChicken)
+
+
     }
     
     func loadEarth() {
@@ -128,5 +157,43 @@ class Gallery: SKScene {
         }
     }
     
+//    func specimensFall(animalCount: Int, sourceAnimal: SKSpriteNode) {
+//        print(animalCount)
+//        if animalCount == 1{
+//            let newAnimal = sourceAnimal.copy() as! SKSpriteNode
+//            newAnimal.physicsBody?.affectedByGravity = true
+//            newAnimal.physicsBody?.isDynamic = true
+//            sourceAnimal.addChild(newAnimal)
+//            newAnimal.zPosition = 5
+//        
+//        } else if animalCount > 1 {
+//            for _ in 1...3 {
+//                let newAnimal = sourceAnimal.copy() as! SKSpriteNode
+//                newAnimal.physicsBody?.affectedByGravity = true
+//                newAnimal.physicsBody?.isDynamic = true
+//                sourceAnimal.addChild(newAnimal)
+//                newAnimal.zPosition = 5
+//            }
+//        }
+//        
+//    }
+    
+    func specimensFall(animalCount: Int, sourceAnimal: SKSpriteNode) {
+        var isDone = false
+        var copyCount = 0
+        if animalCount >= 1{
+            while isDone == false {
+                let newAnimal = sourceAnimal.copy() as! SKSpriteNode
+                newAnimal.physicsBody?.affectedByGravity = true
+                newAnimal.physicsBody?.isDynamic = true
+                sourceAnimal.addChild(newAnimal)
+                newAnimal.zPosition = 5
+                copyCount += 1
+                if copyCount == animalCount {
+                    isDone = true
+                }
+        }
+    }
+}
     
 }

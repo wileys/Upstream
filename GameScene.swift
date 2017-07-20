@@ -38,7 +38,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var obstacleTimer: CFTimeInterval = 3
     var bonusTimer: CFTimeInterval = 3
     var logTimer: CFTimeInterval = 3
-    var sourceBonus: SKNode!
+    var sourceBonus: Bonus!
     var logLayer: SKNode!
     var sourceLog: SKNode!
     var specimenCounter: SKLabelNode!
@@ -47,15 +47,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     
-    
+    var toBeRemoved = [Bonus]()
+    var countUpdated = false
     
     var collectedLabel: SKLabelNode!
     
     var houseList = [#imageLiteral(resourceName: "house4"), #imageLiteral(resourceName: "house5"), #imageLiteral(resourceName: "house3")]
     
-    
-   
     var specimenName = ""
+   
+    
     
     /* Tutorial thumbs */
     var tutorialLabel: SKLabelNode!
@@ -79,7 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         obstacleLayer = self.childNode(withName: "obstacleLayer")
         sourceObstacle = self.childNode(withName: "obstacle")
         bonusLayer = self.childNode(withName: "bonusLayer")
-        sourceBonus = self.childNode(withName: "bonus")
+        sourceBonus = self.childNode(withName: "bonus") as! Bonus
         logLayer = self.childNode(withName: "logLayer")
         sourceLog = self.childNode(withName:"log")
         specimenCounter = childNode(withName: "specimenCounter") as! SKLabelNode
@@ -183,6 +184,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scrollLogs()
         }
         
+        for bonus in toBeRemoved {
+            bonus.removeFromParent()
+            countUpdated = false
+        }
+        
+        toBeRemoved = [Bonus]()
+        
         /* timers count */
         obstacleTimer += fixedDelta
         bonusTimer += fixedDelta
@@ -198,42 +206,88 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let contactA = contact.bodyA
         let contactB = contact.bodyB
         
+        var nodeA: AnyObject
+        var nodeB: AnyObject
         
-        let nodeA = contactA.node!
-        let nodeB = contactB.node!
+        
+        if String(describing: type(of: contactA.node!)) == "Bonus" {
+            nodeA = contactA.node as! Bonus
+            nodeB = contactB.node!
+            if countUpdated == false {
+                specimenCount += 1
+                bioDiversity += 0.01
+                let name = nodeA.specimenName
+                hitBonus(name: name!)
+                countUpdated = true
+                print(nodeA.specimenName)
+
+            }
+            toBeRemoved.append(nodeA as! Bonus)
+            return
+            
+        } else if String(describing: type(of: contactB.node!)) == "Bonus" {
+            nodeA = contactA.node!
+            nodeB = contactB.node as! Bonus
+            if countUpdated == false {
+                specimenCount += 1
+                bioDiversity += 0.01
+                let name = nodeB.specimenName
+                hitBonus(name: name!)
+                print(nodeB.specimenName)
+                countUpdated = true
+                
+            }
+            toBeRemoved.append(nodeB as! Bonus)
+            return
+
+        } else {
+            nodeA = contactA.node!
+            nodeB = contactB.node!
+
+        }
+        
+//        let nodeA = contactA.node as! SKSpriteNode
+//        let nodeB = contactB.node as! SKSpriteNode
+        
         
         
         /* Check node contact for either a bonus or obstacle */
-        if nodeA.name == "bonus" || nodeB.name == "bonus" {
-            specimenCount += 1
-            bioDiversity += 0.01
-            
-            if nodeA.name == "bonus" {
-                hitBonus()
-                nodeA.removeFromParent()
-            }
-            
-            if nodeB.name == "bonus" {
-                hitBonus()
-                nodeA.removeFromParent()
-            }
-
-        }
+//        if nodeA.name == "bonus" || nodeB.name == "bonus" {
+//            specimenCount += 1
+//            bioDiversity += 0.01
+//            
+//            if nodeA.name == "bonus" {
+//                hitBonus()
+//                nodeA.removeFromParent()
+//            }
+//            
+//            if nodeB.name == "bonus" {
+//                hitBonus()
+//                nodeA.removeFromParent()
+//            }
+//
+//        }
         
         /* if the hero hits an obstacle, stop all actions in task */
         
         if nodeA.name == "obstacle" || nodeB.name == "obstacle" {
+            print("hit obstacle")
             hitObstacle()
             
         }
         
         if nodeA.name == "log" || nodeB.name == "log" {
+            print("hit log")
             hitObstacle()
         }
         
         checkEnd()
         
     }
+    
+    
+    
+    
     
     /* Scroll the background */
     func scrollWorld() {
@@ -355,7 +409,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* create bonus objects and scroll them at SAME SPEED as obstacles */
     func scrollBonus() {
         bonusLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
-        for object in bonusLayer.children as! [SKSpriteNode] {
+        for object in bonusLayer.children as! [Bonus] {
             
             /* gets rid of coins once hit */
             let objectPosition = obstacleLayer.convert(object.position, to: self)
@@ -373,7 +427,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //             Choose a specimen randomly 
             let arrayMaxIndex = specimensList.count
             specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
-
+            
             
             
             let rand = arc4random_uniform(100)
@@ -396,11 +450,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1750)
             }
             
-            /* Add new coins */
-            let newBonus = sourceBonus.copy() as! SKNode
+            /* Add new specimens */
+            let newBonus = Bonus(specimenName: specimenName)
             bonusLayer.addChild(newBonus)
+             newBonus.setScale(0.3) 
             
-            
+//            newBonus.specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
+//            print(newBonus.specimenName)
+//            specimenName = newBonus.specimenName
+//            if newBonus.specimenName == "Seal" {
+//                newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "seal"))
+//            } else if newBonus.specimenName == "Giraffe" {
+//                newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "giraffe"))
+//            } else {
+//                 newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "lion"))
+//            }
+//            
             //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
 
@@ -497,11 +562,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(rabbitCount, forKey: "rabbitCount")
         UserDefaults.standard.set(octopusCount, forKey: "octopusCount")
         UserDefaults.standard.set(cowCount, forKey: "cowCount")
+        UserDefaults.standard.synchronize()
+
 
     }
     
     func resetUserDefaults() {
         
+
         UserDefaults.standard.set(0, forKey: "totalSpecimens")
         UserDefaults.standard.set(0, forKey: "dayCount")
         UserDefaults.standard.set(0.4, forKey: "bioDiversity")
@@ -537,6 +605,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(false, forKey: "hasDoneDroughtEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneWeatherEvent")
         
+        UserDefaults.standard.synchronize()
+
+        
     }
     
 
@@ -557,9 +628,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func hitBonus() {
+    func hitBonus(name: String) {
         var emoji = "🦁"
-        switch specimenName {
+        switch name {
         case "Lion":
             emoji = "🦁"
         case "Giraffe":
@@ -600,8 +671,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
-        collectedLabel.text = "\(specimenName) collected! " + emoji
-        collectedList.append(specimenName)
+        collectedLabel.text = "\(name) collected! " + emoji
+        collectedList.append(name)
         collectedLabel.alpha = 1.0
         let hide:SKAction = SKAction(named: "Hide")!
         let wait:SKAction = SKAction.wait(forDuration:0.5)

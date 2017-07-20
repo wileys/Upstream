@@ -53,11 +53,8 @@ class Earth: SKScene {
     var background: SKSpriteNode!
     
     override func didMove(to view: SKView) {
-        print(bioDiversity)
-        timesVisited += 1
         
-        bioDiversity = 0.4
-
+        timesVisited += 1
         
         background = childNode(withName: "background") as! SKSpriteNode
                 
@@ -263,7 +260,7 @@ class Earth: SKScene {
         } else {
             setEventToNone()
         }
-        print(eventName)
+        
     }
     
     /* checks for the event that has already been chosen - this is so that it won't disappear if you 
@@ -316,7 +313,7 @@ class Earth: SKScene {
             }
         } else {
             checkForEvent()
-            print("Checked")
+            
         }
     }
     
@@ -329,7 +326,7 @@ class Earth: SKScene {
             UserDefaults.standard.set("heat event", forKey: "eventName")
         } else {
             checkForEvent()
-            print("Checked")
+            
         }
     }
     
@@ -358,7 +355,7 @@ class Earth: SKScene {
             }
         } else {
             checkForEvent()
-            print("Checked")
+            
         }
     }
     
@@ -420,7 +417,7 @@ class Earth: SKScene {
         UserDefaults.standard.set(previousBioNumber, forKey: "previousBioNumber")
         UserDefaults.standard.set(randomNumber, forKey:"randomNumber")
         //UserDefaults.standard.set(eventName, forKey: "eventName")
-        print(eventName)
+        
 
     }
     
