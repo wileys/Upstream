@@ -157,43 +157,16 @@ class Gallery: SKScene {
         }
     }
     
-//    func specimensFall(animalCount: Int, sourceAnimal: SKSpriteNode) {
-//        print(animalCount)
-//        if animalCount == 1{
-//            let newAnimal = sourceAnimal.copy() as! SKSpriteNode
-//            newAnimal.physicsBody?.affectedByGravity = true
-//            newAnimal.physicsBody?.isDynamic = true
-//            sourceAnimal.addChild(newAnimal)
-//            newAnimal.zPosition = 5
-//        
-//        } else if animalCount > 1 {
-//            for _ in 1...3 {
-//                let newAnimal = sourceAnimal.copy() as! SKSpriteNode
-//                newAnimal.physicsBody?.affectedByGravity = true
-//                newAnimal.physicsBody?.isDynamic = true
-//                sourceAnimal.addChild(newAnimal)
-//                newAnimal.zPosition = 5
-//            }
-//        }
-//        
-//    }
+    /* HAve specimens fall from the sky if they are accounted for */
     
     func specimensFall(animalCount: Int, sourceAnimal: SKSpriteNode) {
-        var isDone = false
-        var copyCount = 0
-        if animalCount >= 1{
-            while isDone == false {
-                let newAnimal = sourceAnimal.copy() as! SKSpriteNode
-                newAnimal.physicsBody?.affectedByGravity = true
-                newAnimal.physicsBody?.isDynamic = true
-                sourceAnimal.addChild(newAnimal)
-                newAnimal.zPosition = 5
-                copyCount += 1
-                if copyCount == animalCount {
-                    isDone = true
-                }
+        if animalCount > 0 {
+            let newAnimal = sourceAnimal.copy() as! SKSpriteNode
+            newAnimal.physicsBody?.affectedByGravity = true
+            newAnimal.physicsBody?.isDynamic = true
+            sourceAnimal.addChild(newAnimal)
+            newAnimal.zPosition = 5
         }
     }
-}
     
 }

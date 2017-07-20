@@ -24,7 +24,7 @@ var height: CGFloat = 0
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    let motionManager = CMMotionManager()
+//    let motionManager = CMMotionManager()
     var character: Character!
     var specimenCount: Int = 0
     var gameState: GameState = .playing
