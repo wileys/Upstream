@@ -45,17 +45,18 @@ class Bonus: SKSpriteNode {
             specimenTexture = SKTexture(imageNamed: "chicken")
         case "Spider":
             specimenTexture = SKTexture(imageNamed: "spooder")
-            //
-            //        case "Caterpillar":
-            //
-            //        case "Penguin":
-            //
-            //        case "Monkey":
-            //
-            //        case "Eagle":
-            //
-            //        case "Panda":
-            //
+
+        case "Caterpillar":
+            specimenTexture = SKTexture(imageNamed: "caterpillar")
+        case "Penguin":
+            specimenTexture = SKTexture(imageNamed: "penguin")
+        case "Monkey":
+            specimenTexture = SKTexture(imageNamed: "monkey")
+        case "Eagle":
+            specimenTexture = SKTexture(imageNamed: "eagle")
+        case "Panda":
+            specimenTexture = SKTexture(imageNamed: "panda")
+
             //        case "Fox":
             //
             //        case "Butterfly":
@@ -80,6 +81,8 @@ class Bonus: SKSpriteNode {
         super.init(texture: specimenTexture, color: UIColor.clear, size: specimenTexture.size())
         
         self.specimenName = specimenName
+        self.size = CGSize(width:70, height:55)
+
         self.physicsBody = SKPhysicsBody(texture: specimenTexture,
                                                       size: CGSize(width: size.width,
                                                                    height: size.height))

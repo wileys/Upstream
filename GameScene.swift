@@ -456,7 +456,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Add new specimens */
             let newBonus = Bonus(specimenName: specimenName)
             bonusLayer.addChild(newBonus)
-             newBonus.setScale(0.3) 
             
 //            newBonus.specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
 //            print(newBonus.specimenName)
