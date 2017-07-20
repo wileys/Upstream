@@ -15,11 +15,15 @@ class MainMenu: SKScene {
     var playButton: MSButtonNode!
     var earth: SKSpriteNode!
     
-    
+    deinit {
+        print("REmoved")
+    }
     
     override func didMove(to view: SKView) {
         playButton = childNode(withName: "playButton") as! MSButtonNode
-        playButton.selectedHandler = {
+        playButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
             self.loadGame()
         }
         

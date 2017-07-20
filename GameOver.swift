@@ -23,15 +23,15 @@ class GameOver: SKScene {
         galleryButton = childNode(withName: "galleryButton") as! MSButtonNode
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
         
-        restartButton.selectedHandler = {
+        restartButton.selectedHandler = { [unowned self] in
             self.loadGame()
         }
         
-        galleryButton.selectedHandler = {
+        galleryButton.selectedHandler = { [unowned self] in
             self.loadGallery()
         }
         
-        earthButton.selectedHandler = {
+        earthButton.selectedHandler = { [unowned self] in
             self.loadEarth()
         }
         
@@ -58,6 +58,8 @@ class GameOver: SKScene {
     }
     
     func loadEarth() {
+        self.removeAllChildren()
+
         /* 1) Grab reference to our SpriteKit view */
         if let view = self.view {
             // Load the SKScene from 'GameScene.sks'
@@ -77,6 +79,8 @@ class GameOver: SKScene {
     }
 
     func loadGallery() {
+        self.removeAllChildren()
+
         /* 1) Grab reference to our SpriteKit view */
         if let view = self.view {
             // Load the SKScene from 'GameScene.sks'

@@ -142,7 +142,9 @@ class Earth: SKScene {
         /* Play button set up */
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
-        playButton.selectedHandler = {
+        playButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
             self.resetUserDefaults()
             self.loadGame()
         }
@@ -150,8 +152,11 @@ class Earth: SKScene {
         /* Gallery button set up */
         
         galleryButton = childNode(withName: "galleryButton") as! MSButtonNode
-        galleryButton.selectedHandler = {
+        galleryButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
             self.loadGallery()
+            
         }
         
         setUserDefaults()
@@ -304,6 +309,7 @@ class Earth: SKScene {
                 self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
                 self.chemicalEarth.isHidden = false
                 self.alertButtonClicked()
+        
                 
             }
             

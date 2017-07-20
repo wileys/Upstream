@@ -83,11 +83,16 @@ class Gallery: SKScene {
         playButton = childNode(withName: "playButton") as! MSButtonNode
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
         
-        playButton.selectedHandler = {
+        playButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
             self.loadGame()
         }
         
-        earthButton.selectedHandler = {
+        
+        earthButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
             self.loadEarth()
         }
         

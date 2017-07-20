@@ -42,7 +42,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var logLayer: SKNode!
     var sourceLog: SKNode!
     var specimenCounter: SKLabelNode!
-    var logSpeed: CGFloat = 4
+    var logSpeed = CGFloat.random(min: 3.5, max: 4)
     var gameOverMenu: SKSpriteNode!
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
@@ -101,6 +101,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* no animals being collected at first */
         collectedLabel.alpha = 0.0
         
+        
         /* Show tutorial ? */
         
         if dayCount == 0 {
@@ -119,7 +120,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         height = self.size.height
         width = self.size.width
         
-        earthButton.selectedHandler = {
+        earthButton.selectedHandler = { [unowned self] in
+            self.removeAllActions()
+            self.removeAllChildren()
             if let view = self.view {
                 // Load the SKScene from 'GameScene.sks'
                 if let scene = SKScene(fileNamed: "Earth") {
@@ -395,7 +398,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
             
-            logSpeed = CGFloat.random(min: 3.5, max: 4)
+           
             
             logTimer = 0
             
@@ -696,6 +699,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func loadGameOver() {
+        
         if let view = self.view {
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "GameOver") {

@@ -90,57 +90,6 @@ class Bonus: SKSpriteNode {
         
     }
     
-    func createBonus() {
-
-        switch specimenName {
-        case "Lion":
-            specimenTexture = SKTexture(imageNamed: "lion")
-        case "Giraffe":
-            specimenTexture = SKTexture(image:#imageLiteral(resourceName: "giraffe"))
-        case "Golden Retriever":
-            specimenTexture = SKTexture(image:#imageLiteral(resourceName: "doge"))
-        case "Seal":
-            specimenTexture = SKTexture(image:#imageLiteral(resourceName: "seal"))
-        case "Chicken":
-            specimenTexture = SKTexture(image:#imageLiteral(resourceName: "chicken"))
-        case "Spider":
-            specimenTexture = SKTexture(image:#imageLiteral(resourceName: "spooder"))
-//
-//        case "Caterpillar":
-//
-//        case "Penguin":
-//
-//        case "Monkey":
-//
-//        case "Eagle":
-//
-//        case "Panda":
-//
-//        case "Fox":
-//
-//        case "Butterfly":
-//
-//        case "Snake":
-//
-//        case "Shark":
-//
-//        case "Rabbit":
-//
-//        case "Octopus":
-//
-//        case "Cow":
-//
-        default:
-            texture = SKTexture(image:#imageLiteral(resourceName: "lion"))
-        }
-//
-    }
-    
-    func checkIfContact() {
-        isContacted = true
-        self.isHidden = true
-
-    }
     
     
     
