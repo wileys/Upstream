@@ -9,6 +9,8 @@
 import Foundation
 import SpriteKit
 
+
+
 class MainMenu: SKScene {
     /* UI Connections */
     
@@ -30,6 +32,7 @@ class MainMenu: SKScene {
         earth = childNode(withName: "earth") as! SKSpriteNode
         let tinyEarthScale:SKAction! = SKAction.init(named:"TinyEarthScale")
         earth.run(tinyEarthScale)
+        
         
     }
     

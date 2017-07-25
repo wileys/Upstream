@@ -15,6 +15,9 @@ enum GameState {
     case playing, gameOver
 }
 
+
+
+
 var collectedList = [String]()
 let specimensList = ["Lion", "Giraffe", "Golden Retriever", "Seal", "Chicken", "Spider", "Caterpillar", "Penguin", "Monkey", "Eagle", "Panda", "Fox", "Butterfly", "Snake", "Shark", "Rabbit", "Octopus", "Cow"]
 
@@ -27,7 +30,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //    let motionManager = CMMotionManager()
     var character: Character!
     var specimenCount: Int = 0
-    var gameState: GameState = .playing
     var force: CGFloat = 1400
     var scrollLayer: SKNode!
     var scrollSpeed: CGFloat = 200
@@ -38,7 +40,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var obstacleTimer: CFTimeInterval = 3
     var bonusTimer: CFTimeInterval = 3
     var logTimer: CFTimeInterval = 3
-    var sourceBonus: Bonus!
     var logLayer: SKNode!
     var sourceLog: SKNode!
     var specimenCounter: SKLabelNode!
@@ -46,6 +47,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameOverMenu: SKSpriteNode!
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
+    var gameState: GameState = .playing
+    
+    var maxLogTimer: Double = 4.0
+    var maxObstacleTimer: Double = 4.0
+    var maxBonusTimer: Double = 2.0
     
     var toBeRemoved = [Bonus]()
     var countUpdated = false
@@ -55,7 +61,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var houseList = [#imageLiteral(resourceName: "house4"), #imageLiteral(resourceName: "house5"), #imageLiteral(resourceName: "house3")]
     
     var specimenName = ""
-   
+    
+    var sourceLion: Bonus!
+    var sourceGolden: Bonus!
+
+    
     
     
     /* Tutorial thumbs */
@@ -80,7 +90,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         obstacleLayer = self.childNode(withName: "obstacleLayer")
         sourceObstacle = self.childNode(withName: "obstacle")
         bonusLayer = self.childNode(withName: "bonusLayer")
-        sourceBonus = self.childNode(withName: "bonus") as! Bonus
         logLayer = self.childNode(withName: "logLayer")
         sourceLog = self.childNode(withName:"log")
         specimenCounter = childNode(withName: "specimenCounter") as! SKLabelNode
@@ -90,6 +99,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
         collectedLabel = childNode(withName: "collectedLabel") as! SKLabelNode
+        
+        sourceLion = Bonus(specimenName: "Lion")
+        sourceGolden = Bonus(specimenName: "Golden Retriever")
+        
+        let sourcesArray = [sourceLion, sourceGolden]
+
+        for source in sourcesArray {
+            source?.position.y = 1500
+        }
+        
         
         
         for background in scrollLayer.children as! [SKSpriteNode] {
@@ -201,7 +220,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         specimenCounter.text = "\(specimenCount)"
         
-        
     }
     
     func didBegin (_ contact: SKPhysicsContact) {
@@ -223,6 +241,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 hitBonus(name: name!)
                 countUpdated = true
                 print(nodeA.specimenName)
+                checkForSpeedIncrease()
 
             }
             toBeRemoved.append(nodeA as! Bonus)
@@ -238,6 +257,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 hitBonus(name: name!)
                 print(nodeB.specimenName)
                 countUpdated = true
+                checkForSpeedIncrease()
                 
             }
             toBeRemoved.append(nodeB as! Bonus)
@@ -304,7 +324,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /*Check if ground sprite has left the scene */
             if bgPosition.y <= -background.size.height / 2 {
                 /*Reposition ground sprite to the second starting position */
-                let newPosition = CGPoint(x: bgPosition.x, y: (self.size.height / 2) + background.size.height)
+                let newPosition = CGPoint(x: bgPosition.x, y: round((self.size.height / 2) + background.size.height))
                 /* Convert new node position back to scroll layer space */
                 background.position = self.convert(newPosition, to: scrollLayer)
             }
@@ -326,7 +346,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if obstacleTimer > 4 {
+        if obstacleTimer > maxObstacleTimer {
             
             /* has to be SKNode bc it's a reference node */
             
@@ -339,7 +359,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             obstacleTimer = 0
             
             let hide: SKAction = SKAction.init(named: "Hide")!
-            tutorialLabel.run(hide)
+            let wait: SKAction = SKAction.wait(forDuration:2)
+            let sequence:SKAction = SKAction.sequence([wait, hide])
+            tutorialLabel.run(sequence)
             
             
         }
@@ -385,7 +407,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if logTimer > 4 {
+        if logTimer > maxLogTimer {
             
             
             /* has to be SKNode bc it's a reference node */
@@ -393,7 +415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1700)
+            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1750)
             newLog.position = self.convert(logPosition, to: logLayer)
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
@@ -424,7 +446,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
-        if bonusTimer >= 2 {
+        if bonusTimer >= maxBonusTimer {
+            
+            var yPos: CGFloat = 1772
+            
             
     
 //             Choose a specimen randomly 
@@ -435,40 +460,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let rand = arc4random_uniform(100)
             
-            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1750)
+            var randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: yPos)
+    
             
             
             if rand < 70 {
                 /* 35% chance of a left side */
-                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: 1750)
+                randomPosition = CGPoint(x: CGFloat.random(min:100, max:250), y: yPos)
                 
                 if rand < 35 {
                     /* 35% chance of a right side */
-                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: 1750)
+                    randomPosition = CGPoint(x: CGFloat.random(min:500, max:650), y: yPos)
                 }
             }
                 
             else {
                 /* 30% chance of middle  */
-                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: 1750)
+                randomPosition = CGPoint(x: CGFloat.random(min:250, max:500), y: yPos)
             }
             
             /* Add new specimens */
             let newBonus = Bonus(specimenName: specimenName)
-            bonusLayer.addChild(newBonus)
-            
-//            newBonus.specimenName = specimensList[Int(arc4random_uniform(UInt32(arrayMaxIndex)))]
-//            print(newBonus.specimenName)
-//            specimenName = newBonus.specimenName
-//            if newBonus.specimenName == "Seal" {
-//                newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "seal"))
-//            } else if newBonus.specimenName == "Giraffe" {
-//                newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "giraffe"))
-//            } else {
-//                 newBonus.texture = SKTexture(image:#imageLiteral(resourceName: "lion"))
+//            if specimenName == "Lion" {
+//                newBonus = sourceLion.copy() as! Bonus
 //            }
-//            
-            //            let randomPosition = CGPoint(x: CGFloat.random(min:100, max:650), y: 1474)
+            bonusLayer.addChild(newBonus)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
 
     
@@ -612,6 +628,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func checkForSpeedIncrease() {
+        
+        if specimenCount == 10 {
+//            bonusLayer.removeAllChildren()
+//            obstacleLayer.removeAllChildren()
+//            logLayer.removeAllChildren()
+            scrollSpeed += 30
+        } else if specimenCount == 20 {
+//            bonusLayer.removeAllChildren()
+//            obstacleLayer.removeAllChildren()
+//            logLayer.removeAllChildren()
+            scrollSpeed += 30
+//            maxLogTimer = 3
+//            maxObstacleTimer = 3
+//            maxBonusTimer = 1.5
+        } else if specimenCount == 30 {
+//            bonusLayer.removeAllChildren()
+//            obstacleLayer.removeAllChildren()
+//            logLayer.removeAllChildren()
+            scrollSpeed += 20
+        } else if specimenCount == 35 {
+//            scrollSpeed += 240
+            maxLogTimer = 2
+            maxObstacleTimer = 1
+            maxBonusTimer = 2
+            
+        }
+    }
 
     
     func checkEnd() {
@@ -631,56 +675,56 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func hitBonus(name: String) {
-        var emoji = "🦁"
-        switch name {
-        case "Lion":
-            emoji = "🦁"
-        case "Giraffe":
-            emoji = "🦌"
-        case "Golden Retriever":
-            emoji = "🐶"
-        case "Seal":
-            emoji = "🐳"
-        case "Chicken":
-            emoji = "🐔"
-        case "Spider":
-            emoji = "🕷"
-        case "Caterpillar":
-            emoji = "🐛"
-        case "Penguin":
-            emoji = "🐧"
-        case "Monkey":
-            emoji = "🐒"
-        case "Eagle":
-            emoji = "🦅"
-        case "Panda":
-            emoji = "🐼"
-        case "Fox":
-            emoji = "🦊"
-        case "Butterfly":
-            emoji = "🦋"
-        case "Snake":
-            emoji = "🐍"
-        case "Shark":
-            emoji = "🦈"
-        case "Rabbit":
-            emoji = "🐇"
-        case "Octopus":
-            emoji = "🐙"
-        case "Cow":
-            emoji = "🐄"
-        default:
-            return
-        }
         
-        collectedLabel.text = "\(name) collected! " + emoji
-        collectedList.append(name)
-        collectedLabel.alpha = 1.0
-        let hide:SKAction = SKAction(named: "Hide")!
-        let wait:SKAction = SKAction.wait(forDuration:0.5)
-        let sequence = SKAction.sequence([wait, hide])
-        collectedLabel.run(sequence)
-        
+            var emoji = "🦁"
+            switch name {
+            case "Lion":
+                emoji = "🦁"
+            case "Giraffe":
+                emoji = "🦌"
+            case "Golden Retriever":
+                emoji = "🐶"
+            case "Seal":
+                emoji = "🐳"
+            case "Chicken":
+                emoji = "🐔"
+            case "Spider":
+                emoji = "🕷"
+            case "Caterpillar":
+                emoji = "🐛"
+            case "Penguin":
+                emoji = "🐧"
+            case "Monkey":
+                emoji = "🐒"
+            case "Eagle":
+                emoji = "🦅"
+            case "Panda":
+                emoji = "🐼"
+            case "Fox":
+                emoji = "🦊"
+            case "Butterfly":
+                emoji = "🦋"
+            case "Snake":
+                emoji = "🐍"
+            case "Shark":
+                emoji = "🦈"
+            case "Rabbit":
+                emoji = "🐇"
+            case "Octopus":
+                emoji = "🐙"
+            case "Cow":
+                emoji = "🐄"
+            default:
+                return
+            }
+            
+            collectedLabel.text = "\(name) collected! " + emoji
+            collectedList.append(name)
+            collectedLabel.alpha = 1.0
+//            let hide:SKAction = SKAction(named: "Hide")!
+//            let wait:SKAction = SKAction.wait(forDuration:2)
+//            let sequence = SKAction.sequence([wait, hide])
+//            collectedLabel.run(sequence)
         
     }
     

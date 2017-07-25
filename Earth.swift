@@ -52,6 +52,8 @@ class Earth: SKScene {
     
     var background: SKSpriteNode!
     
+    var scrapbookButton: MSButtonNode!
+    
     override func didMove(to view: SKView) {
         
         timesVisited += 1
@@ -66,10 +68,10 @@ class Earth: SKScene {
         chemicalEarth = childNode(withName: "chemicalEarth") as! SKSpriteNode
         chemicalEarth.isHidden = true
         
-        fire = childNode(withName: "fire")
+        fire = earth.childNode(withName: "fire")
         fire.isHidden = true
         
-        wind = childNode(withName: "wind")
+        wind = earth.childNode(withName: "wind")
         wind.isHidden = true
         
         /* default event */
@@ -89,6 +91,14 @@ class Earth: SKScene {
         alertMessage = alertBox.childNode(withName: "alertMessage") as! SKSpriteNode
         yesButton = alertBox.childNode(withName: "yesButton") as! MSButtonNode
         noButton = alertBox.childNode(withName: "noButton") as! MSButtonNode
+        
+        scrapbookButton = childNode(withName: "scrapbookButton") as! MSButtonNode
+        scrapbookButton.selectedHandler = { [unowned self] in
+            self.removeAllChildren()
+            self.removeAllActions()
+            self.loadScrapbook()
+            
+        }
         
         //countSpecimens()
         collectedList.removeAll()
@@ -139,6 +149,10 @@ class Earth: SKScene {
 
         }
         
+        if bioNumber <= 0 {
+            eventSprite.removeFromParent()
+        }
+        
         /* Play button set up */
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
@@ -187,6 +201,25 @@ class Earth: SKScene {
         if let view = self.view {
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "Gallery") {
+                // Set the scale mode to scale to fit the window
+                scene.scaleMode = .aspectFill
+                
+                // Present the scene
+                view.presentScene(scene)
+            }
+            
+            view.ignoresSiblingOrder = true
+            
+            view.showsFPS = true
+            view.showsNodeCount = true
+        }
+    }
+    
+    func loadScrapbook() {
+        /* 1) Grab reference to our SpriteKit view */
+        if let view = self.view {
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "Scrapbook") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                 
@@ -254,9 +287,11 @@ class Earth: SKScene {
                     }
                     else if randomNumber < 80 {
                         if randomNumber <= 70 {
-                            playDroughtEvent()
+//                            playDroughtEvent()
+                            playWindEvent()
+
                         } else if randomNumber > 70 {
-                            playWeatherEvent()
+                            playWindEvent()
                         }
                     }
             }

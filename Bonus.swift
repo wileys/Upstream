@@ -57,10 +57,11 @@ class Bonus: SKSpriteNode {
         case "Panda":
             specimenTexture = SKTexture(imageNamed: "panda")
 
-            //        case "Fox":
-            //
-            //        case "Butterfly":
-            //
+        case "Fox":
+            specimenTexture = SKTexture(imageNamed: "fox")
+
+        case "Butterfly":
+            specimenTexture = SKTexture(imageNamed: "butterfly")
             //        case "Snake":
             //
             //        case "Shark":
