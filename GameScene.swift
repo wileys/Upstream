@@ -32,7 +32,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var specimenCount: Int = 0
     var force: CGFloat = 1400
     var scrollLayer: SKNode!
-    var scrollSpeed: CGFloat = 200
+    var scrollSpeed: CGFloat = 240
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
     var sourceObstacle: SKNode!
     var obstacleLayer: SKNode!
@@ -48,10 +48,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     var gameState: GameState = .playing
-    
-    var maxLogTimer: Double = 4.0
-    var maxObstacleTimer: Double = 4.0
-    var maxBonusTimer: Double = 2.0
+//    
+//    var maxLogTimer = 3.8
+//    var maxObstacleTimer = 1.98
+//    var maxBonusTimer = 3.8
     
     var toBeRemoved = [Bonus]()
     var countUpdated = false
@@ -66,7 +66,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var sourceGolden: Bonus!
 
     
-    
+    var maximumWidth = 700
+    var minimumWidth = 55
+
     
     /* Tutorial thumbs */
     var tutorialLabel: SKLabelNode!
@@ -335,6 +337,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     func scrollObstacles() {
         
+        var maxObstacleTimer = 3.8
+        
+        if specimenCount >= 35 {
+            maxObstacleTimer = 2
+        }
         
         obstacleLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         for object in obstacleLayer.children as! [SKReferenceNode] {
@@ -347,6 +354,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if obstacleTimer > maxObstacleTimer {
+        
             
             /* has to be SKNode bc it's a reference node */
             
@@ -375,9 +383,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         logLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         /* Logs move across screen */
-    
-
         
+        var maxLogTimer = 3.8
+    
+        if specimenCount >= 35 {
+            maxLogTimer = 2
+        }
         
         
         for object in logLayer.children as! [SKReferenceNode] {
@@ -415,8 +426,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newLog = sourceLog.copy() as! SKNode
             logLayer.addChild(newLog)
             
-            let logPosition = CGPoint(x: CGFloat.random(min: 55, max: 700), y: 1750)
+           
+            
+            let logPosition = CGPoint(x: randomBetweenNumbers(firstNum: CGFloat(minimumWidth), secondNum: CGFloat(maximumWidth)), y: 1900)
+            
+//            let logPosition = CGPoint(x: 50, y: 1900)
+            
             newLog.position = self.convert(logPosition, to: logLayer)
+            
+//             print(randomBetweenNumbers(firstNum: CGFloat(minimumWidth), secondNum: CGFloat(maximumWidth)))
+            
+            if specimenCount == 20 {
+                maximumWidth = 200
+                minimumWidth = 55
+            }
+            
+            
+            if specimenCount > 20 {
+                maximumWidth = 200
+                minimumWidth = 55
+               
+                let newLogDouble = sourceLog.copy() as! SKNode
+                logLayer.addChild(newLogDouble)
+                let logPositionDouble = CGPoint(x: newLog.position.x + 490, y: 1900)
+                
+                newLogDouble.position = self.convert(logPositionDouble, to: logLayer)
+            }
+            
+
+            
             
             /* Log speed must be here in order for each log generated to have a diff. speed */
             
@@ -433,6 +471,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* create bonus objects and scroll them at SAME SPEED as obstacles */
     func scrollBonus() {
+        
+        var yPos: CGFloat = 1340
+
+        
+        var maxBonusTimer = 1.9
+        
+        if specimenCount >= 35 {
+            maxBonusTimer = 2
+            yPos = 1860
+        }
+        
         bonusLayer.position.y -= scrollSpeed * CGFloat(fixedDelta)
         for object in bonusLayer.children as! [Bonus] {
             
@@ -444,11 +493,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
+        
         /* the y value must be higher to ensure that the bonuses and obstacles don't overlap */
         
         if bonusTimer >= maxBonusTimer {
             
-            var yPos: CGFloat = 1772
+            
+            
             
             
     
@@ -631,29 +682,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func checkForSpeedIncrease() {
         
         if specimenCount == 10 {
-//            bonusLayer.removeAllChildren()
-//            obstacleLayer.removeAllChildren()
-//            logLayer.removeAllChildren()
             scrollSpeed += 30
         } else if specimenCount == 20 {
-//            bonusLayer.removeAllChildren()
-//            obstacleLayer.removeAllChildren()
-//            logLayer.removeAllChildren()
-            scrollSpeed += 30
-//            maxLogTimer = 3
-//            maxObstacleTimer = 3
-//            maxBonusTimer = 1.5
+            scrollSpeed += 10
         } else if specimenCount == 30 {
-//            bonusLayer.removeAllChildren()
-//            obstacleLayer.removeAllChildren()
-//            logLayer.removeAllChildren()
             scrollSpeed += 20
         } else if specimenCount == 35 {
-//            scrollSpeed += 240
-            maxLogTimer = 2
-            maxObstacleTimer = 1
-            maxBonusTimer = 2
-            
+            scrollSpeed += 100
         }
     }
 
@@ -760,6 +795,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+}
+
+func randomBetweenNumbers(firstNum: CGFloat, secondNum: CGFloat) -> CGFloat{
+    return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNum - secondNum) + min(firstNum, secondNum)
 }
 
 /* Declare clamping function */

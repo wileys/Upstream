@@ -14,17 +14,53 @@ import SpriteKit
 class Scrapbook: SKScene {
     
     var windEvent: SKSpriteNode!
+    var heatEvent: SKSpriteNode!
+    var heroEvent: SKSpriteNode!
+    var droughtEvent: SKSpriteNode!
+    var chemicalEvent: SKSpriteNode!
+    var weatherEvent: SKSpriteNode!
+
     var earthButton: MSButtonNode!
     
     
     override func didMove(to view: SKView) {
         
         windEvent = childNode(withName: "windEvent") as! SKSpriteNode
+        droughtEvent = childNode(withName: "droughtEvent") as! SKSpriteNode
+        weatherEvent = childNode(withName: "weatherEvent") as! SKSpriteNode
+        chemicalEvent = childNode(withName: "chemicalEvent") as! SKSpriteNode
+        heroEvent = childNode(withName: "heroEvent") as! SKSpriteNode
+        heatEvent = childNode(withName: "heatEvent") as! SKSpriteNode
         
         windEvent.isHidden = true
+        droughtEvent.isHidden = true
+        weatherEvent.isHidden = true
+        chemicalEvent.isHidden = true
+        heroEvent.isHidden = true
+        heatEvent.isHidden = true
         
         if hasDoneWindEvent == true {
             windEvent.isHidden = false
+        }
+        
+        if hasDoneDroughtEvent == true {
+            droughtEvent.isHidden = false
+        }
+        
+        if hasDoneWeatherEvent == true {
+            weatherEvent.isHidden = false
+        }
+        
+        if hasDoneChemicalEvent == true {
+            chemicalEvent.isHidden = false
+        }
+        
+        if hasDoneHeroEvent == true {
+            heroEvent.isHidden = false
+        }
+        
+        if hasDoneHeatEvent == true {
+            heatEvent.isHidden = false
         }
         
         earthButton = childNode(withName: "earthButton") as! MSButtonNode

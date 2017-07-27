@@ -62,16 +62,16 @@ class Bonus: SKSpriteNode {
 
         case "Butterfly":
             specimenTexture = SKTexture(imageNamed: "butterfly")
-            //        case "Snake":
-            //
-            //        case "Shark":
-            //
-            //        case "Rabbit":
-            //
-            //        case "Octopus":
-            //
-            //        case "Cow":
-        //
+        case "Snake":
+            specimenTexture = SKTexture(imageNamed: "snake")
+        case "Shark":
+            specimenTexture = SKTexture(imageNamed: "shark")
+        case "Rabbit":
+            specimenTexture = SKTexture(imageNamed: "rabbit")
+        case "Octopus":
+            specimenTexture = SKTexture(imageNamed: "octopus")
+        case "Cow":
+            specimenTexture = SKTexture(imageNamed: "cow")
         default:
             specimenTexture = SKTexture(imageNamed:"lion")
             

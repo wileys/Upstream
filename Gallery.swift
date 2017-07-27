@@ -45,6 +45,15 @@ class Gallery: SKScene {
     var sourceSeal:SKSpriteNode!
     var sourceGiraffe: SKSpriteNode!
     var sourceChicken: SKSpriteNode!
+    var sourceSpooder: SKSpriteNode!
+    var sourceCaterpillar: SKSpriteNode!
+    var sourcePenguin: SKSpriteNode!
+    var sourceMonkey: SKSpriteNode!
+    var sourceEagle: SKSpriteNode!
+    var sourcePanda: SKSpriteNode!
+    var sourceFox: SKSpriteNode!
+    var sourceButterfly: SKSpriteNode!
+    
 //    var sourceSpider: SKSpriteNode!
     
     
@@ -78,7 +87,14 @@ class Gallery: SKScene {
         sourceSeal = childNode(withName: "sourceSeal") as! SKSpriteNode
         sourceGiraffe = childNode(withName: "sourceGiraffe") as! SKSpriteNode
         sourceChicken = childNode(withName: "sourceChicken") as! SKSpriteNode
-//        sourceSpider = childNode(withName: "sourceSpider") as! SKSpriteNode
+        sourceSpooder = childNode(withName: "sourceSpooder") as! SKSpriteNode
+        sourceCaterpillar = childNode(withName: "sourceCaterpillar") as! SKSpriteNode
+        sourcePenguin = childNode(withName: "sourcePenguin") as! SKSpriteNode
+        sourceMonkey = childNode(withName: "sourceMonkey") as! SKSpriteNode
+        sourceEagle = childNode(withName: "sourceEagle") as! SKSpriteNode
+        sourcePanda = childNode(withName: "sourcePanda") as! SKSpriteNode
+        sourceFox = childNode(withName: "sourceFox") as! SKSpriteNode
+        sourceButterfly = childNode(withName: "sourceButterfly") as! SKSpriteNode
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
@@ -120,6 +136,14 @@ class Gallery: SKScene {
         specimensFall(animalCount: sealCount, sourceAnimal: sourceSeal)
         specimensFall(animalCount: giraffeCount, sourceAnimal: sourceGiraffe)
         specimensFall(animalCount: chickenCount, sourceAnimal: sourceChicken)
+        specimensFall(animalCount: spiderCount, sourceAnimal: sourceSpooder)
+        specimensFall(animalCount: caterpillarCount, sourceAnimal: sourceCaterpillar)
+        specimensFall(animalCount: penguinCount, sourceAnimal: sourcePenguin)
+        specimensFall(animalCount: monkeyCount, sourceAnimal: sourceMonkey)
+        specimensFall(animalCount: eagleCount, sourceAnimal: sourceEagle)
+        specimensFall(animalCount: pandaCount, sourceAnimal: sourcePanda)
+        specimensFall(animalCount: foxCount, sourceAnimal: sourceFox)
+        specimensFall(animalCount: butterflyCount, sourceAnimal: sourceButterfly)
 
 
     }

@@ -343,6 +343,9 @@ class Earth: SKScene {
                 bioDiversity = 0.5
                 self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
                 self.chemicalEarth.isHidden = false
+                let pulse:SKAction = SKAction.init(named:"EarthScale")!
+                self.chemicalEarth.run(pulse)
+
                 self.alertButtonClicked()
         
                 
@@ -476,6 +479,9 @@ class Earth: SKScene {
         let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioDiversity), duration: 1)
         let wait:SKAction = SKAction.wait(forDuration: 2)
         let sequence = SKAction.sequence([scaleBioBar, wait])
+        if bioDiversity >= 1 {
+            bioDiversity = 1
+        }
         self.bioBar.run(sequence)
         self.background.zPosition = 0
     }
