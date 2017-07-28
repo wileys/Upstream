@@ -27,7 +27,8 @@ var height: CGFloat = 0
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-//    let motionManager = CMMotionManager()
+    var background: SKSpriteNode!
+    
     var character: Character!
     var specimenCount: Int = 0
     var force: CGFloat = 1400
@@ -80,6 +81,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
+        
+        background = childNode(withName: "background") as! SKSpriteNode
+        
         if bioDiversity <= 0.01 {
             resetUserDefaults()
         }
@@ -118,10 +122,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for source in sourcesArray {
             source?.position.y = 1500
         }
-        for background in scrollLayer.children as! [SKSpriteNode] {
-            if eventName == "chemical event" {
-                background.texture = SKTexture(image: #imageLiteral(resourceName: "background orange"))
+        
+        if eventName == "chemical event" {
+            for background in scrollLayer.children as! [SKSpriteNode] {
+                    background.texture = SKTexture(image: #imageLiteral(resourceName: "background orange"))
             }
+            
+            background.color = UIColor(red:0.61, green:0.47, blue:0.32, alpha:1.0)
+
         }
 
         /* no animals being collected at first */

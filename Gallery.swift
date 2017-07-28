@@ -53,6 +53,11 @@ class Gallery: SKScene {
     var sourcePanda: SKSpriteNode!
     var sourceFox: SKSpriteNode!
     var sourceButterfly: SKSpriteNode!
+    var sourceSnake: SKSpriteNode!
+    var sourceShark: SKSpriteNode!
+    var sourceRabbit: SKSpriteNode!
+    var sourceOctopus: SKSpriteNode!
+    var sourceCow: SKSpriteNode!
     
 //    var sourceSpider: SKSpriteNode!
     
@@ -95,6 +100,11 @@ class Gallery: SKScene {
         sourcePanda = childNode(withName: "sourcePanda") as! SKSpriteNode
         sourceFox = childNode(withName: "sourceFox") as! SKSpriteNode
         sourceButterfly = childNode(withName: "sourceButterfly") as! SKSpriteNode
+        sourceSnake = childNode(withName: "sourceSnake") as! SKSpriteNode
+        sourceShark = childNode(withName: "sourceShark") as! SKSpriteNode
+        sourceRabbit = childNode(withName: "sourceRabbit") as! SKSpriteNode
+        sourceOctopus = childNode(withName: "sourceOctopus") as! SKSpriteNode
+        sourceCow = childNode(withName: "sourceCow") as! SKSpriteNode
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
@@ -144,6 +154,11 @@ class Gallery: SKScene {
         specimensFall(animalCount: pandaCount, sourceAnimal: sourcePanda)
         specimensFall(animalCount: foxCount, sourceAnimal: sourceFox)
         specimensFall(animalCount: butterflyCount, sourceAnimal: sourceButterfly)
+        specimensFall(animalCount: snakeCount, sourceAnimal: sourceSnake)
+        specimensFall(animalCount: sharkCount, sourceAnimal: sourceShark)
+        specimensFall(animalCount: rabbitCount, sourceAnimal: sourceRabbit)
+        specimensFall(animalCount: octopusCount, sourceAnimal: sourceOctopus)
+        specimensFall(animalCount: cowCount, sourceAnimal: sourceCow)
 
 
     }
