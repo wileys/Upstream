@@ -242,9 +242,11 @@ class Earth: SKScene {
     func checkForEvent() {
         /* Sets an ORIGINAL event */
         
+        
         /* Overflood of giraffes? Taken care of. */
         if giraffeCount > 10 {
             UserDefaults.standard.set("giraffe event", forKey: "eventName")
+            hasDoneGiraffeEvent = true
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
             bioDiversity -= 0.1
             giraffeCount = 0
@@ -287,11 +289,11 @@ class Earth: SKScene {
                     }
                     else if randomNumber < 80 {
                         if randomNumber <= 70 {
-//                            playDroughtEvent()
-                            playWindEvent()
+                            playDroughtEvent()
 
                         } else if randomNumber > 70 {
-                            playWindEvent()
+                            //playWindEvent()
+                            setEventToNone()
                         }
                     }
             }

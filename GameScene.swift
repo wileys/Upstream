@@ -35,6 +35,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scrollSpeed: CGFloat = 240
     let fixedDelta: CFTimeInterval = 1.0 / 60.0
     var sourceObstacle: SKNode!
+    var sourceChemicalObstacle: SKNode!
+    var sourceYellowObstacle: SKNode!
+    var sourceRedObstacle: SKNode!
+    var sourceHeatObstacle: SKNode!
     var obstacleLayer: SKNode!
     var bonusLayer: SKNode!
     var obstacleTimer: CFTimeInterval = 3
@@ -91,6 +95,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scrollLayer = self.childNode(withName: "scrollLayer")
         obstacleLayer = self.childNode(withName: "obstacleLayer")
         sourceObstacle = self.childNode(withName: "obstacle")
+        sourceChemicalObstacle = self.childNode(withName: "sourceChemicalObstacle")
+        sourceYellowObstacle = self.childNode(withName: "sourceYellowObstacle")
+        sourceRedObstacle = self.childNode(withName: "sourceRedObstacle")
+        sourceHeatObstacle = self.childNode(withName: "sourceHeatObstacle")
         bonusLayer = self.childNode(withName: "bonusLayer")
         logLayer = self.childNode(withName: "logLayer")
         sourceLog = self.childNode(withName:"log")
@@ -110,9 +118,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for source in sourcesArray {
             source?.position.y = 1500
         }
-        
-        
-        
         for background in scrollLayer.children as! [SKSpriteNode] {
             if eventName == "chemical event" {
                 background.texture = SKTexture(image: #imageLiteral(resourceName: "background orange"))
@@ -354,11 +359,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if obstacleTimer > maxObstacleTimer {
-        
+            
+            
+            let obstacleArray = [sourceYellowObstacle, sourceRedObstacle, sourceObstacle]
             
             /* has to be SKNode bc it's a reference node */
             
-            let newObstacle = sourceObstacle.copy() as! SKNode
+            //let maxNumber = obstacleArray.count - 1
+            var chosenIndex = Int(randomBetweenNumbers(firstNum: 0, secondNum: 3))
+            print(chosenIndex)
+            let chosenObstacle = obstacleArray[chosenIndex]!
+            
+            var newObstacle = chosenObstacle.copy() as! SKNode
+            
+            if eventName == "chemical event" {
+                newObstacle = sourceChemicalObstacle.copy() as! SKNode
+            } else if eventName == "heat event" {
+                newObstacle = sourceHeatObstacle.copy() as! SKNode
+            }
+            
+            
+            
             obstacleLayer.addChild(newObstacle)
             
             let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1394)
@@ -555,6 +576,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(hasDoneWindEvent, forKey: "hasDoneWindEvent")
         UserDefaults.standard.set(hasDoneDroughtEvent, forKey: "hasDoneDroughtEvent")
         UserDefaults.standard.set(hasDoneWeatherEvent, forKey: "hasDoneWeatherEvent")
+        UserDefaults.standard.set(hasDoneGiraffeEvent, forKey: "hasDoneGiraffeEvent")
+        
 
         
     }
@@ -674,6 +697,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(false, forKey: "hasDoneDroughtEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneWeatherEvent")
         
+        UserDefaults.standard.set(false, forKey: "hasDoneGiraffeEvent")
+        
         UserDefaults.standard.synchronize()
 
         
@@ -682,7 +707,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func checkForSpeedIncrease() {
         
         if specimenCount == 10 {
-            scrollSpeed += 30
+            
         } else if specimenCount == 20 {
             scrollSpeed += 10
         } else if specimenCount == 30 {

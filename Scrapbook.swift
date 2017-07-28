@@ -19,6 +19,7 @@ class Scrapbook: SKScene {
     var droughtEvent: SKSpriteNode!
     var chemicalEvent: SKSpriteNode!
     var weatherEvent: SKSpriteNode!
+    var giraffeEvent: SKSpriteNode!
 
     var earthButton: MSButtonNode!
     
@@ -31,6 +32,7 @@ class Scrapbook: SKScene {
         chemicalEvent = childNode(withName: "chemicalEvent") as! SKSpriteNode
         heroEvent = childNode(withName: "heroEvent") as! SKSpriteNode
         heatEvent = childNode(withName: "heatEvent") as! SKSpriteNode
+        giraffeEvent = childNode(withName: "giraffeEvent") as! SKSpriteNode
         
         windEvent.isHidden = true
         droughtEvent.isHidden = true
@@ -38,6 +40,7 @@ class Scrapbook: SKScene {
         chemicalEvent.isHidden = true
         heroEvent.isHidden = true
         heatEvent.isHidden = true
+        giraffeEvent.isHidden = true
         
         if hasDoneWindEvent == true {
             windEvent.isHidden = false
@@ -62,6 +65,11 @@ class Scrapbook: SKScene {
         if hasDoneHeatEvent == true {
             heatEvent.isHidden = false
         }
+        
+        if hasDoneGiraffeEvent == true {
+            giraffeEvent.isHidden = false
+        }
+        
         
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
         

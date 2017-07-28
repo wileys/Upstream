@@ -298,6 +298,17 @@ var hasDoneWeatherEvent: Bool {
 }
 
 
+var hasDoneGiraffeEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneGiraffeEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneGiraffeEvent")
+    }
+    
+}
+
+
 
 
 
