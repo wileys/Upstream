@@ -585,6 +585,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(hasDoneDroughtEvent, forKey: "hasDoneDroughtEvent")
         UserDefaults.standard.set(hasDoneWeatherEvent, forKey: "hasDoneWeatherEvent")
         UserDefaults.standard.set(hasDoneGiraffeEvent, forKey: "hasDoneGiraffeEvent")
+        UserDefaults.standard.set(hasDoneSpiderEvent, forKey: "hasDoneSpiderEvent")
+        UserDefaults.standard.set(hasDoneTutorialEvent, forKey: "hasDoneTutorialEvent")
         
 
         
@@ -704,8 +706,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(false, forKey: "hasDoneWindEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneDroughtEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneWeatherEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneTutorialEvent")
+        
         
         UserDefaults.standard.set(false, forKey: "hasDoneGiraffeEvent")
+        UserDefaults.standard.set(false, forKey: "hasDoneSpiderEvent")
         
         UserDefaults.standard.synchronize()
 
@@ -786,7 +791,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
-            collectedLabel.text = "\(name) collected! " + emoji
+            collectedLabel.text = "\(name) collected! "
             collectedList.append(name)
             collectedLabel.alpha = 1.0
 //            let hide:SKAction = SKAction(named: "Hide")!

@@ -43,6 +43,7 @@ class Earth: SKScene {
     
     var fire: SKNode!
     var wind: SKNode!
+    var spiderEmitter: SKNode!
     
     var alertBox: SKSpriteNode!
     /* Yes & no buttons */
@@ -73,6 +74,9 @@ class Earth: SKScene {
         
         wind = earth.childNode(withName: "wind")
         wind.isHidden = true
+        
+        spiderEmitter = earth.childNode(withName: "spiderEmitter")
+        spiderEmitter.isHidden = true
         
         /* default event */
         eventName = "none"
@@ -242,20 +246,49 @@ class Earth: SKScene {
     func checkForEvent() {
         /* Sets an ORIGINAL event */
         
-        
-        /* Overflood of giraffes? Taken care of. */
-        if giraffeCount > 10 {
+        if hasDoneTutorialEvent == false {
+            /* play the tutorial event ! */
+            alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "tutorialquestion"))
+            alertBox.isHidden = false
+            background.zPosition = 5
+            
+            /* Button actions */
+            
+            yesButton.selectedHandler = {
+                UserDefaults.standard.set("tutorial event", forKey: "eventName")
+                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "tutorialevent"))
+                self.alertButtonClicked()
+                
+                
+            }
+            
+            noButton.selectedHandler = {
+                
+                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "tutorialevent"))
+                self.alertButtonClicked()
+                
+            }
+
+            hasDoneTutorialEvent = true
+            return
+
+            
+        } else if giraffeCount > 10 {
+            /* Overflood of giraffes? Taken care of. */
+
             UserDefaults.standard.set("giraffe event", forKey: "eventName")
             hasDoneGiraffeEvent = true
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffeevent2"))
             bioDiversity -= 0.1
             giraffeCount = 0
             totalSpecimens -= giraffeCount
         } else if spiderCount > 10 {
             UserDefaults.standard.set("spider event", forKey: "eventName")
             bioDiversity += 0.1
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent2"))
+            spiderEmitter.isHidden = false
             spiderCount = 1
+            hasDoneSpiderEvent = true
         
         } else if bioDiversity > 0.3 {
             if bioDiversity > 0.5 {
@@ -311,20 +344,22 @@ class Earth: SKScene {
     func checkForEventSecond() {
         switch eventName {
         case "heat event":
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent2"))
             fire.isHidden = false
         case "chemical event":
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent2"))
             chemicalEarth.isHidden = false
-        case "hero event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
-        case "none": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
-        case "giraffe event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffesevent"))
-        case "spider event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent"))
+        case "hero event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent2"))
+        case "none": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent2"))
+        case "giraffe event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffeevent2"))
+        case "spider event":
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent2"))
+            spiderEmitter.isHidden = false
         case "wind event":
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
             wind.isHidden = false
-        case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent"))
-        case "weather event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent"))
+        case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent2"))
+        case "weather event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent2"))
         default: return
         }
     }
@@ -333,7 +368,7 @@ class Earth: SKScene {
     func playChemicalEvent() {
         if hasDoneChemicalEvent == false {
             /* pop up box sent */
-            alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "zombie question"))
+            alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "zombiequestion2"))
             alertBox.isHidden = false
             background.zPosition = 5
         
@@ -343,7 +378,7 @@ class Earth: SKScene {
                 UserDefaults.standard.set("chemical event", forKey: "eventName")
                 hasDoneChemicalEvent = true
                 bioDiversity = 0.5
-                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent"))
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "chemicalevent2"))
                 self.chemicalEarth.isHidden = false
                 let pulse:SKAction = SKAction.init(named:"EarthScale")!
                 self.chemicalEarth.run(pulse)
@@ -366,7 +401,7 @@ class Earth: SKScene {
     func playHeatEvent() {
         if hasDoneHeatEvent == false {
             hasDoneHeatEvent = true
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "heatevent2"))
             bioDiversity -= 0.2
             fire.isHidden = false
             UserDefaults.standard.set("heat event", forKey: "eventName")
@@ -380,12 +415,12 @@ class Earth: SKScene {
         /* Make sure the buttons are untoucheable */
         
         if hasDoneHeroEvent == false {
-            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "aliens question"))
+            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "aliensquestion2"))
             alertBox.isHidden = false
             background.zPosition = 5
             noButton.selectedHandler = {
                 /* show the event! */
-                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent"))
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "superheroesevent2"))
                 hasDoneHeroEvent = true
                 UserDefaults.standard.set("hero event", forKey: "eventName")
                 bioDiversity += 0.2
@@ -411,7 +446,7 @@ class Earth: SKScene {
             wind.isHidden = false
             UserDefaults.standard.set("wind event", forKey: "eventName")
             bioDiversity -= 0.05
-            eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "windevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent2"))
         }
     }
     
@@ -420,14 +455,14 @@ class Earth: SKScene {
             hasDoneDroughtEvent = true
             UserDefaults.standard.set("drought event", forKey: "eventName")
             bioDiversity -= 0.1
-            eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "droughtevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent2"))
         }
     }
 
     func playWeatherEvent() {
     
         if hasDoneWeatherEvent == false {
-            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "weather question"))
+            alertMessage.texture = SKTexture.init(image: #imageLiteral(resourceName: "weatherquestion2"))
             alertBox.isHidden = false
             background.zPosition = 5
             noButton.selectedHandler = {
@@ -435,7 +470,7 @@ class Earth: SKScene {
                 hasDoneWeatherEvent = true
                 UserDefaults.standard.set("weather event", forKey: "eventName")
                 bioDiversity -= 0.2
-                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "weatherevent"))
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent2"))
                 self.alertButtonClicked()
             }
             
@@ -443,7 +478,7 @@ class Earth: SKScene {
                 /* show the event but without a decrease in biodiversity */
                 hasDoneWeatherEvent = true
                 UserDefaults.standard.set("weather event", forKey: "eventName")
-                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "weatherevent"))
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent2"))
                 self.alertButtonClicked()
                 return
                 
@@ -456,7 +491,7 @@ class Earth: SKScene {
     
     func setEventToNone() {
         UserDefaults.standard.set("none", forKey: "eventName")
-        eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent"))
+        eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent2"))
     }
     
     func setUserDefaults() {

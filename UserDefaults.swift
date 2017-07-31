@@ -308,6 +308,26 @@ var hasDoneGiraffeEvent: Bool {
     
 }
 
+var hasDoneTutorialEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneTutorialEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneTutorialEvent")
+    }
+    
+}
+
+var hasDoneSpiderEvent: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasDoneSpiderEvent")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasDoneSpiderEvent")
+    }
+    
+}
+
 
 
 
