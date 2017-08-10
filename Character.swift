@@ -32,14 +32,6 @@ class Character: SKSpriteNode {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-//        if position.y > height/2 {
-//            physicsBody?.applyImpulse(CGVector(dx:200, dy:0))
-//            
-//                    
-//        } else if position.y < height/2 {
-//            physicsBody?.applyImpulse(CGVector(dx:-200, dy:0))
-//            
-//        }
 
             }
     

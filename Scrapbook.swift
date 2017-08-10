@@ -21,6 +21,7 @@ class Scrapbook: SKScene {
     var weatherEvent: SKSpriteNode!
     var giraffeEvent: SKSpriteNode!
     var spiderEvent: SKSpriteNode!
+    var wonEvent: SKSpriteNode!
 
     var earthButton: MSButtonNode!
     
@@ -35,6 +36,7 @@ class Scrapbook: SKScene {
         heatEvent = childNode(withName: "heatEvent") as! SKSpriteNode
         giraffeEvent = childNode(withName: "giraffeEvent") as! SKSpriteNode
         spiderEvent = childNode(withName: "spiderEvent") as! SKSpriteNode
+        wonEvent = childNode(withName: "wonEvent") as! SKSpriteNode
         
         windEvent.isHidden = true
         droughtEvent.isHidden = true
@@ -44,6 +46,7 @@ class Scrapbook: SKScene {
         heatEvent.isHidden = true
         giraffeEvent.isHidden = true
         spiderEvent.isHidden = true
+        wonEvent.isHidden = true
         
         if hasDoneWindEvent == true {
             windEvent.isHidden = false
@@ -77,6 +80,10 @@ class Scrapbook: SKScene {
             spiderEvent.isHidden = false
         }
         
+        if hasWonGame == true {
+            wonEvent.isHidden = false
+        }
+        
         
         earthButton = childNode(withName: "earthButton") as! MSButtonNode
         
@@ -102,8 +109,6 @@ class Scrapbook: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     

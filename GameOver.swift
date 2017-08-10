@@ -52,8 +52,6 @@ class GameOver: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     
@@ -73,8 +71,6 @@ class GameOver: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
 
@@ -94,8 +90,6 @@ class GameOver: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     

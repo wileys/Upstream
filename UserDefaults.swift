@@ -329,7 +329,14 @@ var hasDoneSpiderEvent: Bool {
 }
 
 
-
+var hasWonGame: Bool {
+    get {
+        return UserDefaults.standard.bool(forKey: "hasWonGame")
+    }
+    set {
+        UserDefaults.standard.set(newValue, forKey: "hasWonGame")
+    }
+}
 
 
 

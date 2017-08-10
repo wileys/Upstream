@@ -53,22 +53,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var totalSpecimensLabel: SKLabelNode!
     var earthButton: MSButtonNode!
     var gameState: GameState = .playing
-//    
-//    var maxLogTimer = 3.8
-//    var maxObstacleTimer = 1.98
-//    var maxBonusTimer = 3.8
+    
+    var smoke: SKSpriteNode!
+    var magicEmitter: SKEmitterNode!
+
     
     var toBeRemoved = [Bonus]()
     var countUpdated = false
     
     var collectedLabel: SKLabelNode!
     
-    var houseList = [#imageLiteral(resourceName: "house4"), #imageLiteral(resourceName: "house5"), #imageLiteral(resourceName: "house3")]
     
     var specimenName = ""
-    
-    var sourceLion: Bonus!
-    var sourceGolden: Bonus!
+
 
     
     var maximumWidth = 700
@@ -93,6 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bioDiversity -= 0.10
         gameState = .playing
     
+    
         physicsWorld.contactDelegate = self
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         character = childNode(withName: "character") as! Character
@@ -114,14 +112,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         tutorialLabel = childNode(withName: "tutorialLabel") as! SKLabelNode
         collectedLabel = childNode(withName: "collectedLabel") as! SKLabelNode
         
-        sourceLion = Bonus(specimenName: "Lion")
-        sourceGolden = Bonus(specimenName: "Golden Retriever")
+        magicEmitter = childNode(withName: "magicEmitter") as! SKEmitterNode
+        magicEmitter.isHidden = true
         
-        let sourcesArray = [sourceLion, sourceGolden]
-
-        for source in sourcesArray {
-            source?.position.y = 1500
-        }
+        smoke = scrollLayer.childNode(withName: "smoke") as! SKSpriteNode
+        smoke.isHidden = true
+        
+        character.texture = SKTexture(image:#imageLiteral(resourceName: "character"))
         
         if eventName == "chemical event" {
             for background in scrollLayer.children as! [SKSpriteNode] {
@@ -130,6 +127,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             background.color = UIColor(red:0.61, green:0.47, blue:0.32, alpha:1.0)
 
+        } else if eventName == "heat event" {
+            smoke.isHidden = false
+        } else if eventName == "hero event" {
+            character.texture = SKTexture(image: #imageLiteral(resourceName: "superhero"))
         }
 
         /* no animals being collected at first */
@@ -172,8 +173,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 view.ignoresSiblingOrder = true
                 
-                view.showsFPS = true
-                view.showsNodeCount = true
  
         }
     }
@@ -373,13 +372,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* has to be SKNode bc it's a reference node */
             
-            //let maxNumber = obstacleArray.count - 1
             var chosenIndex = Int(randomBetweenNumbers(firstNum: 0, secondNum: 3))
             print(chosenIndex)
             let chosenObstacle = obstacleArray[chosenIndex]!
             
             var newObstacle = chosenObstacle.copy() as! SKNode
             
+            /* switch out the houses for their corresponding events */
             if eventName == "chemical event" {
                 newObstacle = sourceChemicalObstacle.copy() as! SKNode
             } else if eventName == "heat event" {
@@ -393,7 +392,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let randomPosition = CGPoint(x: CGFloat.random(min:100, max:700), y: 1394)
             newObstacle.position = self.convert(randomPosition, to: obstacleLayer)
             
+            /* reset the timer to doo whop it again */
+            
             obstacleTimer = 0
+            
+            /* shows the tutorial */
             
             let hide: SKAction = SKAction.init(named: "Hide")!
             let wait: SKAction = SKAction.wait(forDuration:2)
@@ -459,13 +462,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let logPosition = CGPoint(x: randomBetweenNumbers(firstNum: CGFloat(minimumWidth), secondNum: CGFloat(maximumWidth)), y: 1900)
             
-//            let logPosition = CGPoint(x: 50, y: 1900)
             
             newLog.position = self.convert(logPosition, to: logLayer)
             
-//             print(randomBetweenNumbers(firstNum: CGFloat(minimumWidth), secondNum: CGFloat(maximumWidth)))
             
-            if specimenCount == 20 {
+            if specimenCount == 19 {
                 maximumWidth = 200
                 minimumWidth = 55
             }
@@ -561,9 +562,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Add new specimens */
             let newBonus = Bonus(specimenName: specimenName)
-//            if specimenName == "Lion" {
-//                newBonus = sourceLion.copy() as! Bonus
-//            }
+            
             bonusLayer.addChild(newBonus)
             newBonus.position = self.convert(randomPosition, to: bonusLayer)
 
@@ -712,6 +711,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         UserDefaults.standard.set(false, forKey: "hasDoneGiraffeEvent")
         UserDefaults.standard.set(false, forKey: "hasDoneSpiderEvent")
         
+        UserDefaults.standard.set(false, forKey: "hasWonGame")
+        
         UserDefaults.standard.synchronize()
 
         
@@ -749,55 +750,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func hitBonus(name: String) {
         
-            var emoji = "🦁"
-            switch name {
-            case "Lion":
-                emoji = "🦁"
-            case "Giraffe":
-                emoji = "🦌"
-            case "Golden Retriever":
-                emoji = "🐶"
-            case "Seal":
-                emoji = "🐳"
-            case "Chicken":
-                emoji = "🐔"
-            case "Spider":
-                emoji = "🕷"
-            case "Caterpillar":
-                emoji = "🐛"
-            case "Penguin":
-                emoji = "🐧"
-            case "Monkey":
-                emoji = "🐒"
-            case "Eagle":
-                emoji = "🦅"
-            case "Panda":
-                emoji = "🐼"
-            case "Fox":
-                emoji = "🦊"
-            case "Butterfly":
-                emoji = "🦋"
-            case "Snake":
-                emoji = "🐍"
-            case "Shark":
-                emoji = "🦈"
-            case "Rabbit":
-                emoji = "🐇"
-            case "Octopus":
-                emoji = "🐙"
-            case "Cow":
-                emoji = "🐄"
-            default:
-                return
-            }
-            
-            collectedLabel.text = "\(name) collected! "
-            collectedList.append(name)
-            collectedLabel.alpha = 1.0
-//            let hide:SKAction = SKAction(named: "Hide")!
-//            let wait:SKAction = SKAction.wait(forDuration:2)
-//            let sequence = SKAction.sequence([wait, hide])
-//            collectedLabel.run(sequence)
+        /* show BOKEH ! */
+        magicEmitter.isHidden = false
+        magicEmitter.resetSimulation()
+
+        /* updates the collected label */
+        collectedLabel.text = "\(name) collected! "
+        collectedList.append(name)
+        collectedLabel.alpha = 1.0
+        
         
     }
     
@@ -828,19 +789,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
+            
         }
     }
     
 }
 
+/* returns a random number */
+
 func randomBetweenNumbers(firstNum: CGFloat, secondNum: CGFloat) -> CGFloat{
     return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNum - secondNum) + min(firstNum, secondNum)
 }
 
-/* Declare clamping function */
 
-func clamp<T: Comparable>(value: T, lower: T, upper: T) -> T {
-    return min(max(value, lower), upper)
-}
+//
+///* Declare clamping function */
+//
+//func clamp<T: Comparable>(value: T, lower: T, upper: T) -> T {
+//    return min(max(value, lower), upper)
+//}

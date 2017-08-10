@@ -176,9 +176,8 @@ class Gallery: SKScene {
             }
             
             view.ignoresSiblingOrder = true
+           
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     
@@ -196,8 +195,7 @@ class Gallery: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
+           
         }
     }
     

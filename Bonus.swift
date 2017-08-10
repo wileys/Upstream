@@ -14,12 +14,7 @@ class Bonus: SKSpriteNode {
     var specimenName: String!
     var specimenTexture: SKTexture!
     var isContacted = true
-    
-//    override init(texture:SKTexture?, color: UIColor, size: CGSize) {
-//        super.init(texture:texture, color:color, size: size)
-//        
-//    }
-    
+        
     /* You are required to implement this for your subclass to work */
     
     

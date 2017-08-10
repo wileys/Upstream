@@ -51,8 +51,6 @@ class MainMenu: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
 

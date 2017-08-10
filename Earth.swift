@@ -55,6 +55,12 @@ class Earth: SKScene {
     
     var scrapbookButton: MSButtonNode!
     
+    /* if the user won game - variables */
+    var continueButton: MSButtonNode!
+    var wonBox: SKSpriteNode!
+    
+    var restartButton: MSButtonNode!
+    
     override func didMove(to view: SKView) {
         
         timesVisited += 1
@@ -89,12 +95,30 @@ class Earth: SKScene {
         eventSprite = childNode(withName: "eventSprite") as! SKSpriteNode
         
         
+        
         /* Alert box set up */
         alertBox = childNode(withName: "alertBox") as! SKSpriteNode
         alertBox.isHidden = true
         alertMessage = alertBox.childNode(withName: "alertMessage") as! SKSpriteNode
         yesButton = alertBox.childNode(withName: "yesButton") as! MSButtonNode
         noButton = alertBox.childNode(withName: "noButton") as! MSButtonNode
+        
+        /* sets up the restart button */
+        restartButton = childNode(withName: "restartButton") as! MSButtonNode
+        restartButton.selectedHandler = {
+            self.alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "newgamequestion"))
+            self.alertBox.isHidden = false
+            self.background.zPosition = 5
+            
+            self.yesButton.selectedHandler = { [unowned self] in
+                self.restartGame()
+            }
+            
+            self.noButton.selectedHandler = {
+                self.alertBox.isHidden = true
+                self.background.zPosition = -2
+            }
+        }
         
         scrapbookButton = childNode(withName: "scrapbookButton") as! MSButtonNode
         scrapbookButton.selectedHandler = { [unowned self] in
@@ -104,18 +128,46 @@ class Earth: SKScene {
             
         }
         
-        //countSpecimens()
+        
+        /* set up congratulatory message */
+        
+        wonBox = childNode(withName: "wonBox") as! SKSpriteNode
+        continueButton = wonBox.childNode(withName: "continueButton") as! MSButtonNode
+        wonBox.isHidden = true
+        
+        continueButton.selectedHandler = {
+            self.wonBox.isHidden = true
+        }
+
+        
         collectedList.removeAll()
         
         if timesVisited == 1 {
             checkForEvent()
         }
         
+  
         if bioDiversity > 1.0 {
             bioDiversity = 1.0
+        } else if bioDiversity < 0.01 {
+            bioDiversity = 0
         }
+    
         
         checkForEventSecond()
+        
+        /* set death event */
+       
+        
+        if Double(bioDiversity) < 0.01 {
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "failureevent"))
+            eventName = "over"
+            UserDefaults.standard.set("over", forKey: "eventName")
+
+            print(eventName)
+            
+            
+        }
 
         /* calling down the biodiversity nubmer */
         let bioNumber = bioDiversity
@@ -144,6 +196,8 @@ class Earth: SKScene {
         populationLabel = stats.childNode(withName: "populationLabel") as! SKLabelNode
         populationLabel.text = String(totalSpecimens)
         
+        /* round down bio number */
+        
         if bioNumber < 0.01 {
             previousBioNumber = 0
         } else if bioNumber > 1.0 {
@@ -153,10 +207,8 @@ class Earth: SKScene {
 
         }
         
-        if bioNumber <= 0 {
-            eventSprite.removeFromParent()
-        }
         
+       
         /* Play button set up */
         
         playButton = childNode(withName: "playButton") as! MSButtonNode
@@ -171,11 +223,14 @@ class Earth: SKScene {
         
         galleryButton = childNode(withName: "galleryButton") as! MSButtonNode
         galleryButton.selectedHandler = { [unowned self] in
+            previousBioNumber = bioDiversity
             self.removeAllChildren()
             self.removeAllActions()
             self.loadGallery()
             
         }
+        
+    
         
         setUserDefaults()
         
@@ -195,8 +250,6 @@ class Earth: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     
@@ -214,8 +267,7 @@ class Earth: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
+            
         }
     }
     
@@ -233,8 +285,6 @@ class Earth: SKScene {
             
             view.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
     }
     
@@ -245,8 +295,13 @@ class Earth: SKScene {
     
     func checkForEvent() {
         /* Sets an ORIGINAL event */
-        
-        if hasDoneTutorialEvent == false {
+        if bioDiversity >= 1 && hasWonGame == false {
+            print("sdfsdf")
+            wonBox.isHidden = false
+            UserDefaults.standard.set(true, forKey: "hasWonGame")
+            setEventToNone()
+            
+        } else if hasDoneTutorialEvent == false {
             /* play the tutorial event ! */
             alertMessage.texture = SKTexture(image: #imageLiteral(resourceName: "tutorialquestion"))
             alertBox.isHidden = false
@@ -256,14 +311,14 @@ class Earth: SKScene {
             
             yesButton.selectedHandler = {
                 UserDefaults.standard.set("tutorial event", forKey: "eventName")
-                self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "tutorialevent"))
+                self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "tutorialeventnonetheless"))
                 self.alertButtonClicked()
                 
                 
             }
             
             noButton.selectedHandler = {
-                
+                UserDefaults.standard.set("tutorial event", forKey: "eventName")
                 self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "tutorialevent"))
                 self.alertButtonClicked()
                 
@@ -325,7 +380,6 @@ class Earth: SKScene {
                             playDroughtEvent()
 
                         } else if randomNumber > 70 {
-                            //playWindEvent()
                             setEventToNone()
                         }
                     }
@@ -356,12 +410,15 @@ class Earth: SKScene {
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "spiderevent2"))
             spiderEmitter.isHidden = false
         case "wind event":
-            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent"))
+            eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "windevent2"))
             wind.isHidden = false
         case "drought event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "droughtevent2"))
         case "weather event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "weatherevent2"))
-        default: return
+        case "tutorial event": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "tutorialevent"))
+        case "over": eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "failureevent"))
+        default: break
         }
+        
     }
     
     
@@ -388,15 +445,33 @@ class Earth: SKScene {
                 
             }
             
-            noButton.selectedHandler = {
+            noButton.selectedHandler = { [unowned self] in
                 bioDiversity = 0
-                self.alertButtonClicked()
+                self.removeAllActions()
+                self.removeAllChildren()
+                if let view = self.view {
+                    // Load the SKScene from 'GameScene.sks'
+                    if let scene = SKScene(fileNamed: "GameOver") {
+                        // Set the scale mode to scale to fit the window
+                        scene.scaleMode = .aspectFill
+                        
+                        // Present the scene
+                        view.presentScene(scene)
+                    }
+                    
+                    view.ignoresSiblingOrder = true
+                    
+                }
+
+                
             }
         } else {
             checkForEvent()
             
         }
     }
+    
+    /*Plays the heat event */
     
     func playHeatEvent() {
         if hasDoneHeatEvent == false {
@@ -440,6 +515,8 @@ class Earth: SKScene {
         }
     }
     
+    
+    /* Plays the wind event - only once */
     func playWindEvent() {
         if hasDoneWindEvent == false {
             hasDoneWindEvent = true
@@ -450,6 +527,7 @@ class Earth: SKScene {
         }
     }
     
+    /* Plays the drought event - only once */
     func playDroughtEvent() {
         if hasDoneDroughtEvent == false {
             hasDoneDroughtEvent = true
@@ -459,6 +537,7 @@ class Earth: SKScene {
         }
     }
 
+    /* Plays the weather event */
     func playWeatherEvent() {
     
         if hasDoneWeatherEvent == false {
@@ -488,7 +567,7 @@ class Earth: SKScene {
         }
     }
 
-    
+    /*Defaults back to no event */
     func setEventToNone() {
         UserDefaults.standard.set("none", forKey: "eventName")
         eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "noneevent2"))
@@ -497,7 +576,6 @@ class Earth: SKScene {
     func setUserDefaults() {
         UserDefaults.standard.set(previousBioNumber, forKey: "previousBioNumber")
         UserDefaults.standard.set(randomNumber, forKey:"randomNumber")
-        //UserDefaults.standard.set(eventName, forKey: "eventName")
         
 
     }
@@ -505,6 +583,8 @@ class Earth: SKScene {
     
     /* resets the defaults - defaults the random event number */
     func resetUserDefaults() {
+        previousBioNumber = bioDiversity
+        UserDefaults.standard.set(previousBioNumber, forKey: "previousBioNumber")
         UserDefaults.standard.set(0, forKey:"randomNumber")
 
     }
@@ -513,14 +593,33 @@ class Earth: SKScene {
     func alertButtonClicked() {
         self.alertBox.isHidden = true
         self.bioBar.xScale = CGFloat(previousBioNumber)
-        let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioDiversity), duration: 1)
-        let wait:SKAction = SKAction.wait(forDuration: 2)
-        let sequence = SKAction.sequence([scaleBioBar, wait])
         if bioDiversity >= 1 {
             bioDiversity = 1
         }
-        self.bioBar.run(sequence)
+        let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioDiversity), duration: 1)
+        let wait:SKAction = SKAction.wait(forDuration: 2)
+        let sequence = SKAction.sequence([scaleBioBar, wait])
+                self.bioBar.run(sequence)
         self.background.zPosition = 0
+    }
+    
+    func restartGame() {
+        bioDiversity = 0
+        self.removeAllActions()
+        self.removeAllChildren()
+        if let view = self.view {
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "MainMenu") {
+                // Set the scale mode to scale to fit the window
+                scene.scaleMode = .aspectFill
+                
+                // Present the scene
+                view.presentScene(scene)
+            }
+            
+            view.ignoresSiblingOrder = true
+            
+        }
     }
     
 }
