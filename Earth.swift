@@ -312,25 +312,26 @@ class Earth: SKScene {
             yesButton.selectedHandler = {
                 UserDefaults.standard.set("tutorial event", forKey: "eventName")
                 self.eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "tutorialeventnonetheless"))
+                previousBioNumber = 0.4
                 self.alertButtonClicked()
-                
-                
+                print(bioDiversity)
+                previousBioNumber = bioDiversity
             }
             
             noButton.selectedHandler = {
                 UserDefaults.standard.set("tutorial event", forKey: "eventName")
                 self.eventSprite.texture = SKTexture(image:#imageLiteral(resourceName: "tutorialevent"))
+                previousBioNumber = 0.4
                 self.alertButtonClicked()
-                
+                print(bioDiversity)
+                previousBioNumber = bioDiversity
             }
 
             hasDoneTutorialEvent = true
             return
-
             
         } else if giraffeCount > 10 {
             /* Overflood of giraffes? Taken care of. */
-
             UserDefaults.standard.set("giraffe event", forKey: "eventName")
             hasDoneGiraffeEvent = true
             eventSprite.texture = SKTexture(image: #imageLiteral(resourceName: "giraffeevent2"))
@@ -344,7 +345,6 @@ class Earth: SKScene {
             spiderEmitter.isHidden = false
             spiderCount = 1
             hasDoneSpiderEvent = true
-        
         } else if bioDiversity > 0.3 {
             if bioDiversity > 0.5 {
                 randomNumber = Int(arc4random_uniform(100))
@@ -599,7 +599,7 @@ class Earth: SKScene {
         let scaleBioBar:SKAction = SKAction.scaleX(to: CGFloat(bioDiversity), duration: 1)
         let wait:SKAction = SKAction.wait(forDuration: 2)
         let sequence = SKAction.sequence([scaleBioBar, wait])
-                self.bioBar.run(sequence)
+        self.bioBar.run(sequence)
         self.background.zPosition = 0
     }
     
@@ -621,5 +621,4 @@ class Earth: SKScene {
             
         }
     }
-    
 }

@@ -16,7 +16,11 @@ class GameOver: SKScene {
     var galleryButton: MSButtonNode!
     var earthButton: MSButtonNode!
     
+    var funFact: SKSpriteNode!
     
+    var factAsset: String!
+    
+    let factList = ["factco2", "factpalmoil", "factconsumerpower", "factenergy", "factcattle", "factrain", "factwaste"]
     
     override func didMove(to view: SKView) {
         restartButton = childNode(withName: "restartButton") as! MSButtonNode
@@ -34,6 +38,14 @@ class GameOver: SKScene {
         earthButton.selectedHandler = { [unowned self] in
             self.loadEarth()
         }
+        
+        let totalIndex = factList.count - 1
+        
+        factAsset = factList[Int(randomBetweenNumbers(firstNum: 0, secondNum: CGFloat(totalIndex)))]
+        print(factAsset)
+        
+        funFact = childNode(withName: "funFact") as! SKSpriteNode
+        funFact.texture = SKTexture.init(imageNamed: factAsset)
         
     }
     
